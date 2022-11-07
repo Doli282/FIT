@@ -32,7 +32,7 @@ public:
   void sell(const Product &p, size_t amount)
   {
     std::shared_ptr<Node> newProduct = std::make_shared<Node>(amount, p); // new possible Product
-    if (productsDB.emplace(p, newProduct).second)                      // if product insert successful -> was not in the table
+    if (productsDB.emplace(p, newProduct).second)                         // if product insert successful -> was not in the table
     {
       productsNO++;
       addToTree(newProduct, amount);
@@ -92,10 +92,10 @@ private:
   bool isLeftChild(std::shared_ptr<Node> child) const noexcept
   {
     std::shared_ptr<Node> parent = child->parent.lock();
-    if(parent)
-    {  
-      //bool left = (child == parent->leftNode);
-      //std::cout << child->productID << " is left child of " << parent->productID << left << std::endl;
+    if (parent)
+    {
+      // bool left = (child == parent->leftNode);
+      // std::cout << child->productID << " is left child of " << parent->productID << left << std::endl;
       return (child == parent->leftNode);
     }
     else
@@ -121,13 +121,13 @@ private:
     { // parent does not exist -> it was root
       root = child;
     }
-    if(child)
+    if (child)
     {
       child->parent = adoptiveParent; // child has new parent
     }
   }
 
-  void rotateRight(std::shared_ptr<Node> x)
+  std::shared_ptr<Node> rotateRight(std::shared_ptr<Node> x)
   {
     std::shared_ptr<Node> y = x->leftNode;
     std::shared_ptr<Node> treeB = y->rightNode;
@@ -135,8 +135,9 @@ private:
     setChild(x, treeB, true);
     setChild(y, x, false);
     x->delta = (++(y->delta)) ? -1 : 0; // alter delta accordingly to(from) Y=+1(0) && X=-1(-2) || Y=0(-1) && X=0(-2)
+    return y;
   }
-  void rotateLeft(std::shared_ptr<Node> x)
+  std::shared_ptr<Node> rotateLeft(std::shared_ptr<Node> x)
   {
     std::shared_ptr<Node> y = x->rightNode;
     std::shared_ptr<Node> treeB = y->leftNode;
@@ -144,8 +145,9 @@ private:
     setChild(x, treeB, false);
     setChild(y, x, true);
     x->delta = (--(y->delta)) ? +1 : 0; // alter delta accordingly to(from) Y=-1(0) && X=+1(+2) || Y=0(+1) && X=0(+2)
+    return y;
   }
-  void rotateRightLeft(std::shared_ptr<Node> x) // double rotation to the left -> first to the right, then to the left
+  std::shared_ptr<Node> rotateRightLeft(std::shared_ptr<Node> x) // double rotation to the left -> first to the right, then to the left
   {
     std::shared_ptr<Node> y = x->rightNode;
     std::shared_ptr<Node> z = y->leftNode;
@@ -157,12 +159,12 @@ private:
     setChild(z, x, true);
     setChild(z, y, false);
 
-    if(z->delta == +1)
+    if (z->delta == +1)
     {
       x->delta = -1;
       y->delta = 0;
     }
-    else if(z->delta == -1)
+    else if (z->delta == -1)
     {
       x->delta = 0;
       y->delta = +1;
@@ -173,8 +175,9 @@ private:
       y->delta = 0;
     }
     z->delta = 0;
+    return z;
   }
-  void rotateLeftRight(std::shared_ptr<Node> x) // double rotation to the right -> first to the left, then to the right
+  std::shared_ptr<Node> rotateLeftRight(std::shared_ptr<Node> x) // double rotation to the right -> first to the left, then to the right
   {
     std::shared_ptr<Node> y = x->leftNode;
     std::shared_ptr<Node> z = y->rightNode;
@@ -185,13 +188,13 @@ private:
     setChild(y, treeB, false);
     setChild(z, x, false);
     setChild(z, y, true);
-    
-    if(z->delta == +1)
+
+    if (z->delta == +1)
     {
       x->delta = 0;
       y->delta = -1;
     }
-    else if(y->delta == -1)
+    else if (y->delta == -1)
     {
       x->delta = +1;
       y->delta = 0;
@@ -202,6 +205,7 @@ private:
       y->delta = 0;
     }
     z->delta = 0;
+    return z;
   }
 
   void balanceTreeAfterInsert(std::shared_ptr<Node> parent, std::shared_ptr<Node> child)
@@ -215,12 +219,12 @@ private:
       {
         if (child->delta > 0) // information came from the inside node
         {
-          std::cout << "rotuji vlevo a vpravo" << std::endl;
+          //std::cout << "rotuji vlevo a vpravo" << std::endl;
           rotateLeftRight(parent);
         }
         else
         {
-          std::cout << "rotuji vpravo" << std::endl;
+          //std::cout << "rotuji vpravo" << std::endl;
           rotateRight(parent);
         }
         return;
@@ -229,87 +233,29 @@ private:
       {
         if (child->delta < 0) // information came from the inside node
         {
-          std::cout << "rotuji vpravo a vlevo" << std::endl;
+          //std::cout << "rotuji vpravo a vlevo" << std::endl;
           rotateRightLeft(parent);
         }
         else
         {
-          std::cout << "rotuji vlevo" << std::endl;
+          //std::cout << "rotuji vlevo" << std::endl;
           rotateLeft(parent);
         }
         return;
       }
       else if (balanceFactor == 0)
       { // tree got balanced, stop propagation
-        std::cout << "koncim bez rotace" << std::endl;
+        //std::cout << "koncim bez rotace" << std::endl;
         return;
       }
 
       // move to the upper floor
-      std::cout << "posouvam se vzhuru" << std::endl;
+      //std::cout << "posouvam se vzhuru" << std::endl;
       child = parent;
       parent = parent->parent.lock();
     }
     return;
   }
-
-  /* void balanceTreeAfterDelete(std::shared_ptr<Node> moved)
-  {
-    std::shared_ptr<Node> x = moved;
-    int BF;
-
-    while (x)
-    {
-      x->height = std::max(getHeight(x->leftNode), getHeight(x->rightNode)) + 1;
-      BF = balanceFactor(x);
-
-      if (BF == -1 || BF == 1)
-        return; // the height of the tree has not changed
-      else if (BF == 0)
-        ;              // tree got ideally balanced after the delete, but height decreased -> propagate further
-      else if (BF > 1) // tree got disbalanced
-      {                // tree is right-heavy
-        std::shared_ptr<Node> y = x->rightNode;
-        int BFY = balanceFactor(y);
-        if (BFY == 1) // rotate left and propagate
-        {
-          rotateLeft(x);
-        }
-        else if (BFY == 0) // rotate left and stop
-        {
-          rotateLeft(x);
-          break;
-        }
-        else // rotate right, rotate left and propagate
-        {
-          rotateRight(y);
-          rotateLeft(x);
-        }
-      }
-      else // (BFY < -1)
-      {    // tree is left-heavy
-        std::shared_ptr<Node> y = x->leftNode;
-        int BFY = balanceFactor(y);
-        if (BFY == -1) // rotate left and propagate
-        {
-          rotateRight(x);
-        }
-        else if (BFY == 0) // rotate left and stop
-        {
-          rotateRight(x);
-          break;
-        }
-        else // rotate right, rotate left and propagate
-        {
-          rotateLeft(y);
-          rotateRight(x);
-        }
-      }
-
-      x = x->parent.lock(); // propagate the change to upper levels
-    }
-    return;
-  } */
 
   bool addToTree(std::shared_ptr<Node> child, const size_t amount)
   {
@@ -346,88 +292,141 @@ private:
     return true;
   }
 
-  bool deleteFromTree(std::shared_ptr<Node> removed)
+  bool balanceTreeAfterDelete(std::shared_ptr<Node> x, bool fromLeft)
   {
-    // removed Node is missing a child
-    if(!removed->leftNode)
-    { // removed nodes does not have left child
-      setChild(removed->parent.lock(), removed->rightNode, isLeftChild(removed));
-    }
-    else if(!removed->rightNode)
+    //std::cout << "balancing..." << std:: endl;
+    while(x) // iterate while not in root
     {
-      setChild(removed->parent.lock(), removed->leftNode, isLeftChild(removed));
-    }
-    return true;
-  }
-
-  // bypass the removed node and connect its relatives
-  void bypass(std::shared_ptr<Node> removed, std::shared_ptr<Node> child)
-  {
-    if (removed->parent.lock() == nullptr)                // removed node is root
-      root = child;                                       // set new root
-    else if (removed == removed->parent.lock()->leftNode) // removed node is left child
-      removed->parent.lock()->leftNode = child;           // grandparent is now connected to the grandchild
-    else                                                  // removed node is right child
-      removed->parent.lock()->rightNode = child;          // grandparent is now connected to the grandchild
-
-    if (child)                         // change the upgoing inheritance (if child exists)
-      child->parent = removed->parent; // child's parent is now its grandparent
-  }
-
-  std::shared_ptr<Node> findSuccessor(std::shared_ptr<Node> node)
-  {
-    while (node->leftNode)
-    {
-      node = node->leftNode;
-    }
-    return node;
-  }
-
-  /* bool deleteFromTree(std::shared_ptr<Node> changed)
-  {
-    std::shared_ptr<Node> disbalanced;
-    if (!changed->leftNode)
-    { // changed node does not have left child
-      disbalanced = ((changed->rightNode) ? (changed->rightNode) : (changed->parent.lock()));
-      bypass(changed, changed->rightNode);
-      balanceTreeAfterDelete(disbalanced); // balance tree after deletion
-    }
-    else if (!changed->rightNode)
-    { // changed node does not have right child
-      disbalanced = ((changed->leftNode) ? (changed->leftNode) : (changed->parent.lock()));
-      bypass(changed, changed->leftNode);
-      balanceTreeAfterDelete(disbalanced); // balance tree after delete
-    }
-    else
-    {                                                                      // changed node has both children
-      std::shared_ptr<Node> successor = findSuccessor(changed->rightNode); // find the element with th next key
-      if (successor->parent.lock() != changed)                             // if successor is not directly connected to changed node
+      //std::cout << "fromLeft = " << fromLeft << std::endl;
+      //std::cout << "delta = " << x->delta << std::endl;
+      if (fromLeft) // the signal came from left
       {
-        disbalanced = successor->parent.lock();    // the first disbalanced node is parent of the successor
-        bypass(successor, successor->rightNode);   // bypass successor and reconnect its relatives
-        successor->rightNode = changed->rightNode; // successor is now parent of changed node's child
-        successor->rightNode->parent = successor;
+        if (x->delta == -1)
+        {
+          x->delta = 0;
+          // propagate
+        }
+        else if (x->delta == 0)
+        {
+          x->delta = 1;
+          // stop propagation
+          return true;
+        }
+        else // x->delta == 1
+        {
+          if (x->rightNode->delta == 1)
+          {
+            x = rotateLeft(x);
+            // propagate
+          }
+          else if (x->rightNode->delta == 0)
+          {
+            x = rotateLeft(x);
+            // stop propagation
+            return true;
+          }
+          else // x->rightNode->delta == -1
+          {
+            x = rotateRightLeft(x);
+            // propagate
+          }
+        }
       }
       else
-      { // if the changed node is the parent of the successor, then the first disbalanced node is successor himself
-        disbalanced = successor;
+      { // from right
+        if (x->delta == 1)
+        {
+          x->delta = 0;
+          // propagate
+        }
+        else if (x->delta == 0)
+        {
+          x->delta = -1;
+          // stop propagation
+          return true;
+        }
+        else // x->delta == -1
+        {
+          if (x->leftNode->delta == -1)
+          {
+            //std::cout << "rotuji doprava" << std::endl;
+            x = rotateRight(x);
+            // propagate
+          }
+          else if (x->leftNode->delta == 0)
+          {
+            x = rotateRight(x);
+            // stop propagation
+            return true;
+          }
+          else // x->rightNode->delta == 1
+          {
+            x = rotateLeftRight(x);
+            // propagate
+          }
+        }
       }
-      bypass(changed, successor);              // place successor on the position of the changed node
-      successor->leftNode = changed->leftNode; // connect successor with the second, left child of the changed node
-      successor->leftNode->parent = successor;
-      balanceTreeAfterDelete(disbalanced); // balance tree after delete
-      getHeight(successor);
+      fromLeft = isLeftChild(x);
+      x = x->parent.lock();
     }
     return true;
-  } */
+  }
+
+  bool deleteFromTree(std::shared_ptr<Node> removed)
+  {
+    std::cout << "deleting... " << removed->productID << std::endl;
+    // removed Node is missing a child
+    std::shared_ptr<Node> affected = nullptr; // first node affected by a node disappearing
+    bool fromLeft; // direction of the signal of a node disappearing
+    if (!removed->leftNode)
+    { // removed nodes does not have left child
+      fromLeft = isLeftChild(removed);
+      affected = removed->parent.lock();
+      setChild(affected, removed->rightNode, fromLeft);
+    }
+    else if (!removed->rightNode)
+    { // removed node does not have right child
+      fromLeft = isLeftChild(removed);
+      affected = removed->parent.lock();
+      setChild(affected, removed->leftNode, fromLeft);
+    }
+    else
+    { // removed node does have both children
+      std::shared_ptr<Node> successor = removed->rightNode;
+      std::shared_ptr<Node> nextSuccessor = successor->leftNode;
+      if (nextSuccessor)
+      { // successor has left child -> find the correct successor
+        while (nextSuccessor)
+        {
+          successor = nextSuccessor;
+          nextSuccessor = nextSuccessor->leftNode;
+        }
+        affected = successor->parent.lock();
+        fromLeft = true;
+        setChild(affected, successor->rightNode, true);
+        setChild(successor, removed->rightNode, false);
+      }
+      else 
+      { // successor is directly connected to the removed node
+        affected = successor; // successor got new left children
+        fromLeft = false; // successor came from right
+      }
+      setChild(successor, removed->leftNode, true);
+      setChild(removed->parent.lock(), successor, isLeftChild(removed));
+      successor->delta = removed->delta; // overwrite the delta with the information from the previous node in the position
+    }
+    balanceTreeAfterDelete(affected, fromLeft); // balance tree after the delete
+    //std::cout << "deleted" << std::endl;
+    return true;
+  }
 
   // add sale
   void addSale(const Product &p, size_t amount)
   {
     std::shared_ptr<Node> changed = productsDB.at(p);
     changed->amountSold += amount;
-    //deleteFromTree(changed);
-    // addToTree(changed, changed->amountSold);
+    deleteFromTree(changed);
+    //  addToTree(changed, changed->amountSold);
     return;
   }
 
@@ -447,12 +446,12 @@ private:
   }
   void treeShow(std::shared_ptr<Node> node, int prefix)
   {
-    if(node)
+    if (node)
     {
       prefix++;
       treeShow(node->rightNode, prefix);
       for (int i = 0; i < prefix; i++)
-        std::cout << "     ";
+        std::cout << "       ";
       std::cout << node->amountSold << "[" << node->delta << "](" << (node->parent.lock() ? std::to_string(node->parent.lock()->amountSold) : "root") << "){" << node->productID << "}" << std::endl;
       treeShow(node->leftNode, prefix);
     }
@@ -487,12 +486,12 @@ void test1()
   // assert(T.sold(1, 3) == 46);
   // assert(T.product(2) == "mushrooms");
 
-  //T.sell("ham", 11);
-  // assert(T.products() == 4);
-  // assert(T.product(2) == "ham");
-  // assert(T.sold(2) == 13);
-  // assert(T.sold(2, 2) == 13);
-  // assert(T.sold(1, 2) == 45);
+  // T.sell("ham", 11);
+  //  assert(T.products() == 4);
+  //  assert(T.product(2) == "ham");
+  //  assert(T.sold(2) == 13);
+  //  assert(T.sold(2, 2) == 13);
+  //  assert(T.sold(1, 2) == 45);
   T.showTree();
 }
 
