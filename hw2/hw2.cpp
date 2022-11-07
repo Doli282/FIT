@@ -88,13 +88,25 @@ private:
   size_t productsNO = 0;
   std::unordered_map<Product, std::shared_ptr<Node>> productsDB;
 
-  void setChild(std::shared_ptr<Node> adoptiveParent, std::shared_ptr<Node> child, bool isLeftChild)
+  // check if child is a left child -> child without parent IS a left child
+  bool isLeftChild(std::shared_ptr<Node> child) const noexcept
   {
-    if (adoptiveParent == nullptr) // parent does not exist -> it was root
-    {
-      root = child;
+    std::shared_ptr<Node> parent = child->parent.lock();
+    if(parent)
+    {  
+      //bool left = (child == parent->leftNode);
+      //std::cout << child->productID << " is left child of " << parent->productID << left << std::endl;
+      return (child == parent->leftNode);
     }
     else
+    {
+      return true;
+    }
+  }
+
+  void setChild(std::shared_ptr<Node> adoptiveParent, std::shared_ptr<Node> child, bool isLeftChild)
+  {
+    if (adoptiveParent)
     {
       if (isLeftChild) // set child as left or right accordingly
       {
@@ -105,6 +117,10 @@ private:
         adoptiveParent->rightNode = child;
       }
     }
+    else
+    { // parent does not exist -> it was root
+      root = child;
+    }
     if(child)
     {
       child->parent = adoptiveParent; // child has new parent
@@ -114,64 +130,32 @@ private:
   void rotateRight(std::shared_ptr<Node> x)
   {
     std::shared_ptr<Node> y = x->leftNode;
-    std::shared_ptr<Node> treeA = y->leftNode;
     std::shared_ptr<Node> treeB = y->rightNode;
-    std::shared_ptr<Node> treeC = x->rightNode;
-    std::shared_ptr<Node> parent = x->parent.lock();
+    setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, true);
     setChild(y, x, false);
-    if(parent)
-    {
-      setChild(parent, y, (x == parent->leftNode));
-    }
-    else
-    {
-      root = y;
-      y->parent = std::weak_ptr<Node>();
-    }
     x->delta = (++(y->delta)) ? -1 : 0; // alter delta accordingly to(from) Y=+1(0) && X=-1(-2) || Y=0(-1) && X=0(-2)
   }
   void rotateLeft(std::shared_ptr<Node> x)
   {
     std::shared_ptr<Node> y = x->rightNode;
     std::shared_ptr<Node> treeB = y->leftNode;
-    std::shared_ptr<Node> parent = x->parent.lock();
+    setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, false);
     setChild(y, x, true);
-    if(parent)
-    {
-      setChild(parent, y, (x == parent->leftNode));
-    }
-    else
-    {
-      root = y;
-      y->parent = std::weak_ptr<Node>();
-    }
     x->delta = (--(y->delta)) ? +1 : 0; // alter delta accordingly to(from) Y=-1(0) && X=+1(+2) || Y=0(+1) && X=0(+2)
   }
   void rotateRightLeft(std::shared_ptr<Node> x) // double rotation to the left -> first to the right, then to the left
   {
     std::shared_ptr<Node> y = x->rightNode;
     std::shared_ptr<Node> z = y->leftNode;
-    std::shared_ptr<Node> treeA = x->leftNode;
     std::shared_ptr<Node> treeB = z->leftNode;
     std::shared_ptr<Node> treeC = z->rightNode;
-    std::shared_ptr<Node> treeD = y->rightNode;
-    std::shared_ptr<Node> parent = x->parent.lock();
-    
+    setChild(x->parent.lock(), z, isLeftChild(x));
     setChild(x, treeB, false);
     setChild(y, treeC, true);
     setChild(z, x, true);
     setChild(z, y, false);
-    if(parent)
-    {
-      setChild(parent, z, (x == parent->leftNode));
-    }
-    else
-    {
-      root = z;
-      z->parent = std::weak_ptr<Node>();
-    }
 
     if(z->delta == +1)
     {
@@ -194,25 +178,13 @@ private:
   {
     std::shared_ptr<Node> y = x->leftNode;
     std::shared_ptr<Node> z = y->rightNode;
-    std::shared_ptr<Node> treeA = y->leftNode;
     std::shared_ptr<Node> treeB = z->leftNode;
     std::shared_ptr<Node> treeC = z->rightNode;
-    std::shared_ptr<Node> treeD = x->rightNode;
-    std::shared_ptr<Node> parent = x->parent.lock();
-
+    setChild(x->parent.lock(), z, isLeftChild(x));
     setChild(x, treeC, true);
     setChild(y, treeB, false);
     setChild(z, x, false);
     setChild(z, y, true);
-    if(parent)
-    {
-      setChild(parent, z, (x == parent->leftNode));
-    }
-    else
-    {
-      root = z;
-      z->parent = std::weak_ptr<Node>();
-    }
     
     if(z->delta == +1)
     {
@@ -243,12 +215,12 @@ private:
       {
         if (child->delta > 0) // information came from the inside node
         {
-          //std::cout << "rotuji vlevo a vpravo" << std::endl;
+          std::cout << "rotuji vlevo a vpravo" << std::endl;
           rotateLeftRight(parent);
         }
         else
         {
-          //std::cout << "rotuji vpravo" << std::endl;
+          std::cout << "rotuji vpravo" << std::endl;
           rotateRight(parent);
         }
         return;
@@ -257,24 +229,24 @@ private:
       {
         if (child->delta < 0) // information came from the inside node
         {
-          //std::cout << "rotuji vpravo a vlevo" << std::endl;
+          std::cout << "rotuji vpravo a vlevo" << std::endl;
           rotateRightLeft(parent);
         }
         else
         {
-          //std::cout << "rotuji vlevo" << std::endl;
+          std::cout << "rotuji vlevo" << std::endl;
           rotateLeft(parent);
         }
         return;
       }
       else if (balanceFactor == 0)
       { // tree got balanced, stop propagation
-        //std::cout << "koncim bez rotace" << std::endl;
+        std::cout << "koncim bez rotace" << std::endl;
         return;
       }
 
       // move to the upper floor
-      //std::cout << "posouvam se vzhuru" << std::endl;
+      std::cout << "posouvam se vzhuru" << std::endl;
       child = parent;
       parent = parent->parent.lock();
     }
@@ -374,6 +346,20 @@ private:
     return true;
   }
 
+  bool deleteFromTree(std::shared_ptr<Node> removed)
+  {
+    // removed Node is missing a child
+    if(!removed->leftNode)
+    { // removed nodes does not have left child
+      setChild(removed->parent.lock(), removed->rightNode, isLeftChild(removed));
+    }
+    else if(!removed->rightNode)
+    {
+      setChild(removed->parent.lock(), removed->leftNode, isLeftChild(removed));
+    }
+    return true;
+  }
+
   // bypass the removed node and connect its relatives
   void bypass(std::shared_ptr<Node> removed, std::shared_ptr<Node> child)
   {
@@ -467,7 +453,7 @@ private:
       treeShow(node->rightNode, prefix);
       for (int i = 0; i < prefix; i++)
         std::cout << "     ";
-      std::cout << node->amountSold << "[" << node->delta << "](" << (node->parent.lock() ? std::to_string(node->parent.lock()->amountSold) : "root") << ")" << std::endl;
+      std::cout << node->amountSold << "[" << node->delta << "](" << (node->parent.lock() ? std::to_string(node->parent.lock()->amountSold) : "root") << "){" << node->productID << "}" << std::endl;
       treeShow(node->leftNode, prefix);
     }
     return;
