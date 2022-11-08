@@ -45,7 +45,42 @@ public:
   }
 
   // The most sold product has rank 1
-  size_t rank(const Product &p) const;
+  size_t rank(const Product &p) const
+  {
+    size_t key;
+    try
+    {
+      key = productsDB.at(p)->amountSold;
+    }
+    catch (...)
+    {
+      // product is not in the DB
+      throw std::out_of_range("");
+    }
+
+    std::shared_ptr<Node> node = root;
+    size_t overallRank = 0;
+    while (node) // serach tree from root to the leafs
+    {
+      if (key > node->amountSold) // key is bigger
+      {
+        overallRank += node->rankInSubtree;
+        ; // save rank in the subtree to the overall rank
+        node = node->rightNode;
+      }
+      else if (key < node->amountSold)
+      {
+        node = node->leftNode;
+      }
+      else                                  // p == node->productID
+      {                                     // node found -> return its rank
+        overallRank += node->rankInSubtree; // add rank in the subtree to overall rank
+        break;
+      }
+    }
+    return productsNO - (overallRank - 1); // rank is from the lowest -> it needs to be reversed (!bonk me!)
+  }
+
   const Product &product(size_t rank) const;
 
   // How many copies of product with given rank were sold
@@ -75,7 +110,7 @@ private:
   {
     Node(size_t amount, Product productName) : amountSold(amount), productID(productName) {}
     int delta = 0;
-    u_int32_t rank;
+    size_t rankInSubtree = 1;
     size_t amountSold = 0;
     std::weak_ptr<Node> parent;
     std::shared_ptr<Node> rightNode;
@@ -134,7 +169,8 @@ private:
     setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, true);
     setChild(y, x, false);
-    x->delta = (++(y->delta)) ? -1 : 0; // alter delta accordingly to(from) Y=+1(0) && X=-1(-2) || Y=0(-1) && X=0(-2)
+    x->rankInSubtree -= y->rankInSubtree; // change ranking of nodes
+    x->delta = (++(y->delta)) ? -1 : 0;   // alter delta accordingly to(from) Y=+1(0) && X=-1(-2) || Y=0(-1) && X=0(-2)
     return y;
   }
   std::shared_ptr<Node> rotateLeft(std::shared_ptr<Node> x)
@@ -144,7 +180,8 @@ private:
     setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, false);
     setChild(y, x, true);
-    x->delta = (--(y->delta)) ? +1 : 0; // alter delta accordingly to(from) Y=-1(0) && X=+1(+2) || Y=0(+1) && X=0(+2)
+    y->rankInSubtree += x->rankInSubtree; // change ranking of nodes
+    x->delta = (--(y->delta)) ? +1 : 0;   // alter delta accordingly to(from) Y=-1(0) && X=+1(+2) || Y=0(+1) && X=0(+2)
     return y;
   }
   std::shared_ptr<Node> rotateRightLeft(std::shared_ptr<Node> x) // double rotation to the left -> first to the right, then to the left
@@ -158,6 +195,9 @@ private:
     setChild(y, treeC, true);
     setChild(z, x, true);
     setChild(z, y, false);
+
+    y->rankInSubtree -= z->rankInSubtree;
+    z->rankInSubtree += x->rankInSubtree;
 
     if (z->delta == +1)
     {
@@ -189,6 +229,8 @@ private:
     setChild(z, x, false);
     setChild(z, y, true);
 
+    x->rankInSubtree -= (z->rankInSubtree += y->rankInSubtree);
+
     if (z->delta == +1)
     {
       x->delta = 0;
@@ -219,12 +261,12 @@ private:
       {
         if (child->delta > 0) // information came from the inside node
         {
-          //std::cout << "rotuji vlevo a vpravo" << std::endl;
+          // std::cout << "rotuji vlevo a vpravo" << std::endl;
           rotateLeftRight(parent);
         }
         else
         {
-          //std::cout << "rotuji vpravo" << std::endl;
+          // std::cout << "rotuji vpravo" << std::endl;
           rotateRight(parent);
         }
         return;
@@ -233,24 +275,24 @@ private:
       {
         if (child->delta < 0) // information came from the inside node
         {
-          //std::cout << "rotuji vpravo a vlevo" << std::endl;
+          // std::cout << "rotuji vpravo a vlevo" << std::endl;
           rotateRightLeft(parent);
         }
         else
         {
-          //std::cout << "rotuji vlevo" << std::endl;
+          // std::cout << "rotuji vlevo" << std::endl;
           rotateLeft(parent);
         }
         return;
       }
       else if (balanceFactor == 0)
       { // tree got balanced, stop propagation
-        //std::cout << "koncim bez rotace" << std::endl;
+        // std::cout << "koncim bez rotace" << std::endl;
         return;
       }
 
       // move to the upper floor
-      //std::cout << "posouvam se vzhuru" << std::endl;
+      // std::cout << "posouvam se vzhuru" << std::endl;
       child = parent;
       parent = parent->parent.lock();
     }
@@ -264,7 +306,7 @@ private:
       root = child;
       return true;
     }
-    std::shared_ptr<Node> parent = nullptr;
+    std::shared_ptr<Node> parent;
     std::shared_ptr<Node> descendant = root;
     while (descendant)
     { // while I am not in a list
@@ -275,6 +317,7 @@ private:
       }
       else
       {
+        descendant->rankInSubtree += 1; // there is one more node in front of this node
         descendant = descendant->leftNode;
       }
     }
@@ -294,13 +337,15 @@ private:
 
   bool balanceTreeAfterDelete(std::shared_ptr<Node> x, bool fromLeft)
   {
-    //std::cout << "balancing..." << std:: endl;
-    while(x) // iterate while not in root
+    // std::cout << "balancing..." << std:: endl;
+    while (x) // iterate while not in root
     {
-      //std::cout << "fromLeft = " << fromLeft << std::endl;
-      //std::cout << "delta = " << x->delta << std::endl;
+      // std::cout << "fromLeft = " << fromLeft << std::endl;
+      // std::cout << "delta = " << x->delta << std::endl;
       if (fromLeft) // the signal came from left
       {
+        // propagate the information that a node with lower rank was deleted
+        x->rankInSubtree -= 1;
         if (x->delta == -1)
         {
           x->delta = 0;
@@ -310,7 +355,7 @@ private:
         {
           x->delta = 1;
           // stop propagation
-          return true;
+          break;
         }
         else // x->delta == 1
         {
@@ -323,7 +368,7 @@ private:
           {
             x = rotateLeft(x);
             // stop propagation
-            return true;
+            break;
           }
           else // x->rightNode->delta == -1
           {
@@ -343,13 +388,13 @@ private:
         {
           x->delta = -1;
           // stop propagation
-          return true;
+          break;
         }
         else // x->delta == -1
         {
           if (x->leftNode->delta == -1)
           {
-            //std::cout << "rotuji doprava" << std::endl;
+            // std::cout << "rotuji doprava" << std::endl;
             x = rotateRight(x);
             // propagate
           }
@@ -357,7 +402,7 @@ private:
           {
             x = rotateRight(x);
             // stop propagation
-            return true;
+            break;
           }
           else // x->rightNode->delta == 1
           {
@@ -369,6 +414,23 @@ private:
       fromLeft = isLeftChild(x);
       x = x->parent.lock();
     }
+
+    // propagate information about the delete to the root
+    if (x)
+    {
+      fromLeft = isLeftChild(x);
+      x = x->parent.lock();
+      while (x)
+      {
+        if (fromLeft)
+        {
+          x->rankInSubtree -= 1;
+        }
+        fromLeft = isLeftChild(x);
+        x = x->parent.lock();
+      }
+    }
+
     return true;
   }
 
@@ -377,7 +439,7 @@ private:
     std::cout << "deleting... " << removed->productID << std::endl;
     // removed Node is missing a child
     std::shared_ptr<Node> affected = nullptr; // first node affected by a node disappearing
-    bool fromLeft; // direction of the signal of a node disappearing
+    bool fromLeft;                            // direction of the signal of a node disappearing
     if (!removed->leftNode)
     { // removed nodes does not have left child
       fromLeft = isLeftChild(removed);
@@ -406,17 +468,18 @@ private:
         setChild(affected, successor->rightNode, true);
         setChild(successor, removed->rightNode, false);
       }
-      else 
-      { // successor is directly connected to the removed node
+      else
+      {                       // successor is directly connected to the removed node
         affected = successor; // successor got new left children
-        fromLeft = false; // successor came from right
+        fromLeft = false;     // successor came from right
       }
       setChild(successor, removed->leftNode, true);
       setChild(removed->parent.lock(), successor, isLeftChild(removed));
-      successor->delta = removed->delta; // overwrite the delta with the information from the previous node in the position
+      successor->delta = removed->delta;                 // overwrite the delta with the information from the previous node in the position
+      successor->rankInSubtree = removed->rankInSubtree; // give the successor information about the rank of its predecessor
     }
     balanceTreeAfterDelete(affected, fromLeft); // balance tree after the delete
-    //std::cout << "deleted" << std::endl;
+    // std::cout << "deleted" << std::endl;
     return true;
   }
 
@@ -427,6 +490,7 @@ private:
     changed->amountSold += amount;
     deleteFromTree(changed);
     changed->delta = 0; // nulify pointers and erase data from its former life as a node
+    changed->rankInSubtree = 1;
     changed->leftNode = nullptr;
     changed->rightNode = nullptr;
     addToTree(changed, changed->amountSold);
@@ -455,7 +519,7 @@ private:
       treeShow(node->rightNode, prefix);
       for (int i = 0; i < prefix; i++)
         std::cout << "       ";
-      std::cout << node->amountSold << "[" << node->delta << "](" << (node->parent.lock() ? std::to_string(node->parent.lock()->amountSold) : "root") << "){" << node->productID << "}" << std::endl;
+      std::cout << node->amountSold << "[" << node->delta << "]#" << node->rankInSubtree << "(" << (node->parent.lock() ? std::to_string(node->parent.lock()->amountSold) : "root") << "){" << node->productID << "}" << std::endl;
       treeShow(node->leftNode, prefix);
     }
     return;
@@ -483,9 +547,10 @@ void test1()
   T.sell("ham", 2);
   T.sell("mushrooms", 12);
 
+  T.showTree();
   assert(T.products() == 4);
-  // assert(T.rank("ham") == 3);
-  // assert(T.rank("coke") == 1);
+  assert(T.rank("ham") == 3);
+  assert(T.rank("coke") == 1);
   // assert(T.sold(1, 3) == 46);
   // assert(T.product(2) == "mushrooms");
 
@@ -615,6 +680,7 @@ void test6()
   T.showTree();
   T.sell("mushrooms", 5);
   T.showTree();
+  std::cout << "rank of 'a' is " << T.rank("a") << std::endl; 
 }
 void test7(int data)
 {
@@ -642,7 +708,7 @@ int main()
   test4();
   test5();
   test6();
-  test7(30);
+  // test7(30);
 }
 
 #endif
