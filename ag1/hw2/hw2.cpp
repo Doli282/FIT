@@ -47,10 +47,11 @@ public:
   // The most sold product has rank 1
   size_t rank(const Product &p) const
   {
-    size_t key;
+    //size_t key;
+    std::shared_ptr<Node> node;
     try
     {
-      key = productsDB.at(p)->amountSold;
+      node = productsDB.at(p);
     }
     catch (...)
     {
@@ -58,24 +59,16 @@ public:
       throw std::out_of_range("");
     }
 
-    std::shared_ptr<Node> node = root;
-    size_t overallRank = 0;
-    while (node) // serach tree from root to the leafs
+    size_t overallRank = node->rankInSubtree;
+    std::shared_ptr<Node> parent = node->parent.lock();
+    while (parent) // search tree from root to the leafs
     {
-      if (key < node->amountSold) // key is bigger
+      if (isLeftChild(node)) // node is left child
       {
-        overallRank += node->rankInSubtree; // save rank in the subtree to the overall rank
-        node = node->leftNode;
+        overallRank += parent->rankInSubtree; // save rank in the subtree to the overall rank
       }
-      else if (key > node->amountSold)
-      {
-        node = node->rightNode;
-      }
-      else                                  // p == node->productID
-      {                                     // node found -> return its rank
-        overallRank += node->rankInSubtree; // add rank in the subtree to overall rank
-        break;
-      }
+      node = parent;
+      parent = parent->parent.lock();
     }
     return overallRank;
   }
@@ -710,24 +703,24 @@ void test6()
   T.showTree();
   std::cout << "rank of 'a' is " << T.rank("a") << std::endl; 
 }
-void test7(int data)
+void test7(size_t data)
 {
   std::cout << "TEST 7 -> random selling" << std::endl;
   Bestsellers<std::string> T;
-  for (int i = 0; i < data; i++)
+  for (size_t i = 0; i < data; i++)
   {
     T.sell("a" + std::to_string(i), rand() % (data * 2));
   }
-  T.showTree();
-  for (int i = 0; i < 10; i++)
+  for (size_t i = 0; i < 10; i++)
   {
-    T.sell("a" + std::to_string(i), -100);
+    T.sell("a" + std::to_string(i), 1);
   }
-  for( int i = 0; i < 10; i++)
+  T.showTree();
+  for(size_t i = 1; i <= data; i++)
   {
+    //std::cout << "test nr. " << i << std:: endl;
     assert(T.rank(T.product(i)) == i);
   }
-  T.showTree();
 }
 
 int main()
@@ -740,7 +733,7 @@ int main()
   test4();
   test5();
   test6();
-  // test7(30);
+   test7(30);
 }
 
 #endif
