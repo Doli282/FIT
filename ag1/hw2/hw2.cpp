@@ -62,15 +62,14 @@ public:
     size_t overallRank = 0;
     while (node) // serach tree from root to the leafs
     {
-      if (key > node->amountSold) // key is bigger
+      if (key < node->amountSold) // key is bigger
       {
-        overallRank += node->rankInSubtree;
-        ; // save rank in the subtree to the overall rank
-        node = node->rightNode;
-      }
-      else if (key < node->amountSold)
-      {
+        overallRank += node->rankInSubtree; // save rank in the subtree to the overall rank
         node = node->leftNode;
+      }
+      else if (key > node->amountSold)
+      {
+        node = node->rightNode;
       }
       else                                  // p == node->productID
       {                                     // node found -> return its rank
@@ -78,7 +77,7 @@ public:
         break;
       }
     }
-    return productsNO - (overallRank - 1); // rank is from the lowest -> it needs to be reversed (!bonk me!)
+    return overallRank;
   }
 
   const Product &product(size_t rank) const;
@@ -169,7 +168,7 @@ private:
     setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, true);
     setChild(y, x, false);
-    x->rankInSubtree -= y->rankInSubtree; // change ranking of nodes
+    y->rankInSubtree += x->rankInSubtree; // change ranking of nodes
     x->delta = (++(y->delta)) ? -1 : 0;   // alter delta accordingly to(from) Y=+1(0) && X=-1(-2) || Y=0(-1) && X=0(-2)
     return y;
   }
@@ -180,7 +179,7 @@ private:
     setChild(x->parent.lock(), y, isLeftChild(x));
     setChild(x, treeB, false);
     setChild(y, x, true);
-    y->rankInSubtree += x->rankInSubtree; // change ranking of nodes
+    x->rankInSubtree -= y->rankInSubtree; // change ranking of nodes
     x->delta = (--(y->delta)) ? +1 : 0;   // alter delta accordingly to(from) Y=-1(0) && X=+1(+2) || Y=0(+1) && X=0(+2)
     return y;
   }
@@ -196,8 +195,7 @@ private:
     setChild(z, x, true);
     setChild(z, y, false);
 
-    y->rankInSubtree -= z->rankInSubtree;
-    z->rankInSubtree += x->rankInSubtree;
+    x->rankInSubtree -= (z->rankInSubtree += y->rankInSubtree);
 
     if (z->delta == +1)
     {
@@ -229,7 +227,9 @@ private:
     setChild(z, x, false);
     setChild(z, y, true);
 
-    x->rankInSubtree -= (z->rankInSubtree += y->rankInSubtree);
+    
+    y->rankInSubtree -= z->rankInSubtree;
+    z->rankInSubtree += x->rankInSubtree;
 
     if (z->delta == +1)
     {
@@ -313,11 +313,11 @@ private:
       parent = descendant;
       if (descendant->amountSold < amount)
       { // if the key of a parent is less than the key of the child
+        descendant->rankInSubtree += 1; // there is one more node in front of this node
         descendant = descendant->rightNode;
       }
       else
       {
-        descendant->rankInSubtree += 1; // there is one more node in front of this node
         descendant = descendant->leftNode;
       }
     }
@@ -344,8 +344,6 @@ private:
       // std::cout << "delta = " << x->delta << std::endl;
       if (fromLeft) // the signal came from left
       {
-        // propagate the information that a node with lower rank was deleted
-        x->rankInSubtree -= 1;
         if (x->delta == -1)
         {
           x->delta = 0;
@@ -379,6 +377,8 @@ private:
       }
       else
       { // from right
+        // propagate the information that a node with lower rank was deleted
+        x->rankInSubtree -= 1;
         if (x->delta == 1)
         {
           x->delta = 0;
@@ -422,7 +422,7 @@ private:
       x = x->parent.lock();
       while (x)
       {
-        if (fromLeft)
+        if (!fromLeft)
         {
           x->rankInSubtree -= 1;
         }
