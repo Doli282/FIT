@@ -426,7 +426,10 @@ private:
     std::shared_ptr<Node> changed = productsDB.at(p);
     changed->amountSold += amount;
     deleteFromTree(changed);
-    //  addToTree(changed, changed->amountSold);
+    changed->delta = 0; // nulify pointers and erase data from its former life as a node
+    changed->leftNode = nullptr;
+    changed->rightNode = nullptr;
+    addToTree(changed, changed->amountSold);
     return;
   }
 
@@ -486,8 +489,8 @@ void test1()
   // assert(T.sold(1, 3) == 46);
   // assert(T.product(2) == "mushrooms");
 
-  // T.sell("ham", 11);
-  //  assert(T.products() == 4);
+  T.sell("ham", 11);
+  assert(T.products() == 4);
   //  assert(T.product(2) == "ham");
   //  assert(T.sold(2) == 13);
   //  assert(T.sold(2, 2) == 13);
@@ -610,6 +613,8 @@ void test6()
   T.showTree();
   T.sell("bread", 7);
   T.showTree();
+  T.sell("mushrooms", 5);
+  T.showTree();
 }
 void test7(int data)
 {
@@ -623,8 +628,8 @@ void test7(int data)
   for (int i = 0; i < 10; i++)
   {
     T.sell("a" + std::to_string(i), -100);
-    T.showTree();
   }
+  T.showTree();
 }
 
 int main()
@@ -637,7 +642,7 @@ int main()
   test4();
   test5();
   test6();
-  //test7(30);
+  test7(30);
 }
 
 #endif
