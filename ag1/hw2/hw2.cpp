@@ -80,7 +80,30 @@ public:
     return overallRank;
   }
 
-  const Product &product(size_t rank) const;
+  const Product &product(size_t rank) const
+  {
+    std::shared_ptr<Node> node = root;
+    size_t rankInSubtree;
+    while(node)
+    {
+      rankInSubtree = node->rankInSubtree;
+      if(rankInSubtree > rank)
+      {
+        node = node->rightNode;
+      }
+      else if(rankInSubtree < rank)
+      {
+        rank -= rankInSubtree; // adjust rank to the current subtree
+        node = node->leftNode;
+      }
+      else
+      { // rank found
+        return node->productID;
+      }
+    }
+    throw std::out_of_range("");
+    return root->productID;
+  }
 
   // How many copies of product with given rank were sold
   size_t sold(size_t rank) const;
@@ -549,14 +572,19 @@ void test1()
 
   T.showTree();
   assert(T.products() == 4);
+  std::cout << "pocet produktu OK" << std::endl;
   assert(T.rank("ham") == 3);
+  std::cout << "rank produktu OK" << std::endl;
   assert(T.rank("coke") == 1);
+  std::cout << "rank produktu OK" << std::endl;
   // assert(T.sold(1, 3) == 46);
-  // assert(T.product(2) == "mushrooms");
+  assert(T.product(2) == "mushrooms");
+  std::cout << "rank OK" << std::endl;
 
   T.sell("ham", 11);
+  T.showTree();
   assert(T.products() == 4);
-  //  assert(T.product(2) == "ham");
+  assert(T.product(2) == "ham");
   //  assert(T.sold(2) == 13);
   //  assert(T.sold(2, 2) == 13);
   //  assert(T.sold(1, 2) == 45);
@@ -694,6 +722,10 @@ void test7(int data)
   for (int i = 0; i < 10; i++)
   {
     T.sell("a" + std::to_string(i), -100);
+  }
+  for( int i = 0; i < 10; i++)
+  {
+    assert(T.rank(T.product(i)) == i);
   }
   T.showTree();
 }
