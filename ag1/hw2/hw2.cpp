@@ -114,19 +114,84 @@ public:
 
   // Bonus only, ignore if you are not interested in bonus
   // The smallest (resp. largest) rank with sold(rank) == sold(r)
-  size_t first_same(size_t r) const { return 0; }
-  size_t last_same(size_t r) const { return 0; }
+  size_t first_same(size_t r) const
+  {
+    //std::cout << "given rank: " << r << std:: endl;
+    size_t value = sold(r);
+    //std:: cout << "found value = " << value << std::endl;
+    std::shared_ptr<Node> node = root;
+    size_t currRank = 0;
+    size_t rankInSubtree;
+    while (node)
+    {
+      //std::cout << "currRank = " << currRank << std::endl;
+      //std::cout << "Rank = " << r << std::endl;
+      rankInSubtree = node->rankInSubtree;
+      if (value < node->amountSold)
+      { // value in the node is too large -> find lower value -> go left
+        //std::cout << "value < node->amountSold" << std::endl;
+        currRank += rankInSubtree;
+        node = node->leftNode;
+      }
+      else if (value > node->amountSold)
+      { // value in the node is too small -> find larger value -> go right
+        //std::cout << "value > node->amountSold" << std::endl;
+        node = node->rightNode;
+      }
+      else
+      { // value found -> try to find larger node with the same value
+        //std::cout << "value == node->amountSold" << std::endl;
+        r = currRank + rankInSubtree;
+        node = node->rightNode;
+      }
+    }
+    //std::cout << "new rank: " << r << std::endl;
+    return r;
+  }
+  size_t last_same(size_t r) const
+  {
+    //std::cout << "given rank: " << r << std:: endl;
+    size_t value = sold(r);
+    //std:: cout << "found value = " << value << std::endl;
+    std::shared_ptr<Node> node = root;
+    size_t currRank = 0;
+    size_t rankInSubtree;
+    while (node)
+    {
+      //std::cout << "currRank = " << currRank << std::endl;
+      //std::cout << "Rank = " << r << std::endl;
+      rankInSubtree = node->rankInSubtree;
+      if (value < node->amountSold)
+      { // value in the node is too large -> find lower value -> go left
+        //std::cout << "value < node->amountSold" << std::endl;
+        currRank += rankInSubtree;
+        node = node->leftNode;
+      }
+      else if (value > node->amountSold)
+      { // value in the node is too small -> find larger value -> go right
+        //std::cout << "value > node->amountSold" << std::endl;
+        node = node->rightNode;
+      }
+      else
+      { // value found -> try to find larger node with the same value
+        //std::cout << "value == node->amountSold" << std::endl;
+        r = currRank += rankInSubtree;
+        node = node->leftNode;
+      }
+    }
+    //std::cout << "new rank: " << r << std::endl;
+    return r;
+  }
 
-  /* void showTree()
+  /*  void showTree()
   {
     std::cout << "=== TREE ===" << std::endl;
-    // treeShow(root, "", false);
     treeShow(root, -1);
     std::cout << "=== TREE END ===" << std::endl;
     // DBShow();
     std::cout << std::endl;
     return;
-  } */
+  }  */
 
 private:
   struct Node
@@ -927,7 +992,46 @@ void test9()
   T.sell("coke", 12);
   //T.showTree();
 }
-
+void test10(size_t data)
+{
+  std::cout << "TEST 10 -> bonus" << std::endl;
+  Bestsellers<std::string> T;
+  size_t maximum = 0;
+  size_t amount;
+  for (size_t i = 0; i < data; i++)
+  {
+    maximum += amount = rand() % (8);
+    T.sell("a" + std::to_string(i), amount);
+  }
+  //T.showTree();
+  //for(size_t j = 1; j <= data; j++)
+  //{
+    T.first_same(10);
+    T.first_same(6);
+    T.last_same(1);
+    T.last_same(16);
+  //}
+}
+void test11(size_t data)
+{
+  std::cout << "TEST 11 -> edge case bonus" << std::endl;
+  Bestsellers<std::string> T;
+  size_t maximum = 0;
+  size_t amount;
+  for (size_t i = 0; i < data; i++)
+  {
+    maximum += amount = 1;
+    T.sell("a" + std::to_string(i), amount);
+  }
+  //T.showTree();
+  //for(size_t j = 1; j <= data; j++)
+  //{
+    T.first_same(10);
+    T.first_same(6);
+    T.last_same(1);
+    T.last_same(16);
+  //}
+}
 int main()
 {
   srand(time(0));
@@ -938,15 +1042,17 @@ int main()
   test4();
   test5();
   test6();
-  test7(30);
+  //test7(30);
   test75(15, 10000);
-  test75(100, 100000);
-  test7(3000);
-  test7(10000);
-  test7(50000);
-  test7(100000);
+  //test75(100, 100000);
+  //test7(3000);
+  //test7(10000);
+  //test7(50000);
+  //test7(100000);
   test8();
   test9();
+  test10(30);
+  test11(15);
   std::cout << "FINISHED" << std::endl;
 }
 
