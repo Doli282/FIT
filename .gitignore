@@ -33,3 +33,6 @@
 
 #vscode
 *.vscode
+
+#output files
+output*.txt
