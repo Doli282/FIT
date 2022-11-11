@@ -36,3 +36,16 @@
 
 #output files
 output*.txt
+*.hex
+
+#compressed libraries/files
+*.jar
+*.zip
+
+#testdata
+aps/hw1/memfile_*
+
+#from other authors
+aps/hw1/test_Petr.asm
+
+
