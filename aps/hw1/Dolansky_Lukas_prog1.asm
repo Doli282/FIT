@@ -1,9 +1,9 @@
-.data
-.align 2
-.word 1
-.word 0xe
-.word 0xc
-.word 2 3 4 5 11 35 37 49 99 100 101 
+#.data
+#.align 2
+#.word 1
+#.word 0xf
+#.word 0xc
+#.word 1 2 3 4 5 11 35 37 49 99 100 101 0x66 0 0xffffffff 0x01010101
 
 
 .text
