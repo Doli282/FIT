@@ -53,7 +53,6 @@ void removeUnreachable(DFA& automaton)
 {
     std::set<State> states;
     std::map<std::pair<State, Symbol>, State> transitions;
-    std::set<State> finalStates;
 
     // BFS
     std::queue<State> queue;
@@ -90,6 +89,45 @@ void removeUnreachable(DFA& automaton)
             ++it;
         }
     }
+
+    // update new set of states and transitions
+    automaton.m_States = states;
+    automaton.m_Transitions = transitions;
+    return;
+}
+
+void removeSuperfluous(DFA& automaton)
+{
+    std::set<State> states;
+    std::map<std::pair<State, Symbol>, State> transitions;
+    
+    //BFS
+    std::queue<State> queue;
+    for(auto finalState: automaton.m_FinalStates)
+    { // fill the queue with final states
+        queue.push(finalState);
+    }
+
+    State inspectedState;
+    
+    while(!queue.empty())
+    {
+        inspectedState = queue.front();
+        queue.pop();
+        // find transitions from this state to others
+        for(auto transition : automaton.m_Transitions)
+        {
+            if(transition.second == inspectedState)
+            { // save transitions to the inspected state and push the previous state to the queue, if not visisted yet
+                if(states.emplace(transition.first.first).second)
+                {
+                    queue.push(transition.first.first);
+                }
+                transitions.emplace(std::move(transition));
+            }
+        }
+    }
+    states.emplace(automaton.m_InitialState);
 
     // update new set of states and transitions
     automaton.m_States = states;
