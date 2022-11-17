@@ -41,9 +41,61 @@ struct DFA {
 };
 
 #endif
-
+// minimize
+// -> remove unreachable states
+// -> remove superflous states
+// -> equivalence
+// determinize
 DFA unify(const NFA& a, const NFA& b);
 DFA intersect(const NFA& a, const NFA& b);
+
+void removeUnreachable(DFA& automaton)
+{
+    std::set<State> states;
+    std::map<std::pair<State, Symbol>, State> transitions;
+    std::set<State> finalStates;
+
+    // BFS
+    std::queue<State> queue;
+    queue.push(automaton.m_InitialState);
+    State inspectedState;
+    
+    while(!queue.empty())
+    {
+        inspectedState = queue.front();
+        queue.pop();
+        // find transitions from this state to others
+        for(auto transition : automaton.m_Transitions)
+        {
+            if(transition.first.first == inspectedState)
+            { // save transitions from the inspected state and push the next state to the queue, if not visisted yet
+                if(states.emplace(transition.second).second)
+                {
+                    queue.push(transition.second);
+                }
+                transitions.emplace(std::move(transition));
+            }
+        }
+    }
+
+    // update final states -> remove unreachable states
+    for(auto it = automaton.m_FinalStates.begin(); it != automaton.m_FinalStates.end();)
+    {
+        if(states.find(*it) != states.end()) // if a final state was not found in the new set of states, erase it
+        {
+            it = automaton.m_FinalStates.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    // update new set of states and transitions
+    automaton.m_States = states;
+    automaton.m_Transitions = transitions;
+    return;
+}
 
 #ifndef __PROGTEST__
 
