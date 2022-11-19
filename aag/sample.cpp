@@ -78,7 +78,8 @@ DFA determinize(const NFA &NFAutomaton)
             {
                 try
                 {
-                    nextStates.insert(NFAutomaton.m_Transitions.at(state, symbol));
+                    std::set<State> tmp = NFAutomaton.m_Transitions.at(std::make_pair(state, symbol));
+                    nextStates.merge(tmp);
                 }
                 catch (const std::exception &e) // to catch exception for being out of bounds when the transition does not exist
                 {
@@ -285,7 +286,66 @@ void minimize(DFA &automaton)
     equivalence(automaton);
 }
 
-DFA unify(const NFA &a, const NFA &b);
+void unifyOne(const NFA &originalNFA, NFA &resultNFA, bool inverted)
+{
+    std::set<Symbol> alphabet = originalNFA.m_Alphabet;
+    resultNFA.m_Alphabet.merge(alphabet); // union of alphabets
+
+    State NOStatesInB = (inverted ? -1 : 1);
+    std::map<State, State> convert; // map states from original new numbers
+
+    // add original automaton to the new automaton
+    for (State state : originalNFA.m_States) // add set of all states
+    {
+        NOStatesInB += (inverted ? -1 : 1);
+        convert.emplace(state, NOStatesInB);
+        resultNFA.m_States.emplace(NOStatesInB);
+    }
+
+    State previousState;
+    for (auto it = originalNFA.m_Transitions.begin(); it != originalNFA.m_Transitions.end(); ++it) // add transitions
+    {
+        previousState = it->first.first;
+        if (previousState == originalNFA.m_InitialState) // if the transition is from the original initial state add it to the new initial state
+        {
+            previousState = resultNFA.m_InitialState;
+        }
+        else
+        {
+            previousState = convert.at(previousState);
+        }
+        std::set<State> nextStates;
+        for (State state2 : it->second)
+        {
+            nextStates.emplace(convert.at(state2));
+        }
+        resultNFA.m_Transitions.emplace(std::make_pair(previousState, it->first.second), nextStates);
+    }
+
+    for (State state : originalNFA.m_FinalStates) // add final states
+    {
+        resultNFA.m_FinalStates.emplace(convert.at(state));
+        if (state == originalNFA.m_InitialState) // if the original intial state is a final one as well, make the new initial state a final one, too
+        {
+            resultNFA.m_FinalStates.emplace(resultNFA.m_InitialState);
+        }
+    }
+}
+
+DFA unify(const NFA &a, const NFA &b) // unify using epsilon transition in the process
+{
+    NFA resultNFA; // create new automaton
+
+    resultNFA.m_InitialState = 0; // add new initial state
+
+    unifyOne(a, resultNFA, false); // add the first automaton
+    unifyOne(b, resultNFA, true);  // add the second automaton
+
+    DFA resultDFA = determinize(resultNFA);
+    minimize(resultDFA);
+    return resultDFA;
+}
+
 DFA intersect(const NFA &a, const NFA &b);
 
 #ifndef __PROGTEST__
