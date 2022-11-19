@@ -51,6 +51,7 @@ struct DFA
 
 DFA determinize(const NFA &NFAutomaton)
 {
+    std::cout << "determinizing" << std::endl;
     DFA DFAutomaton;
     DFAutomaton.m_Alphabet = NFAutomaton.m_Alphabet;         // copy alphabet
     DFAutomaton.m_InitialState = NFAutomaton.m_InitialState; // copy initial state
@@ -59,17 +60,16 @@ DFA determinize(const NFA &NFAutomaton)
     std::map<std::set<State>, State> setToState; // map newly created states to numbers
     std::queue<std::set<State>> queue;           // queue with new states
     State NOStates = 0;
-    State currentState;
 
     // insert initial state
     std::set<State> currentSetState{DFAutomaton.m_InitialState};
+    setToState.emplace(currentSetState, NOStates++);
     queue.push(std::move(currentSetState));
 
     while (!queue.empty())
     {
         currentSetState = queue.front();
         queue.pop();
-        currentState = setToState.at(currentSetState);
 
         for (Symbol symbol : NFAutomaton.m_Alphabet) // for every symbol in the alphabet and for every state in the set find new set of states that you cen get to
         {
@@ -81,7 +81,7 @@ DFA determinize(const NFA &NFAutomaton)
                     std::set<State> tmp = NFAutomaton.m_Transitions.at(std::make_pair(state, symbol));
                     nextStates.merge(tmp);
                 }
-                catch (const std::exception &e) // to catch exception for being out of bounds when the transition does not exist
+                catch (...) // to catch exception for being out of bounds when the transition does not exist
                 {
                     ;
                 }
@@ -93,16 +93,17 @@ DFA determinize(const NFA &NFAutomaton)
                     NOStates++;
                     queue.push(nextStates);
                 }
-                DFAutomaton.m_Transitions.emplace(std::make_pair(setToState.at(nextStates), symbol), currentState);
+                DFAutomaton.m_Transitions.emplace(std::make_pair(setToState.at(currentSetState), symbol), setToState.at(nextStates));
             }
         }
     }
-
+    std::cout << "determinized" << std::endl;
     return DFAutomaton;
 }
 
 void removeUnreachable(DFA &automaton)
 {
+    std::cout << "removing unreachable" << std::endl;
     std::set<State> states;
     std::map<std::pair<State, Symbol>, State> transitions;
 
@@ -145,11 +146,13 @@ void removeUnreachable(DFA &automaton)
     // update new set of states and transitions
     automaton.m_States = states;
     automaton.m_Transitions = transitions;
+    std::cout << "unreachable removed" << std::endl;
     return;
 }
 
 void removeSuperfluous(DFA &automaton)
 {
+    std::cout << "removing superfluous" << std::endl;
     std::set<State> states;
     std::map<std::pair<State, Symbol>, State> transitions;
 
@@ -184,20 +187,18 @@ void removeSuperfluous(DFA &automaton)
     // update new set of states and transitions
     automaton.m_States = states;
     automaton.m_Transitions = transitions;
+    std::cout << "superfluous removed" << std::endl;
     return;
 }
 
 void equivalence(DFA &automaton)
 {
+    std::cout << "equivalizing" << std::endl;
     std::map<State, unsigned int> stateToClass;                         // map states to their equivalence classes
     std::map<unsigned int, std::set<State>> classToStates;              // map classes to set of states in the class
     std::map<State, std::map<Symbol, unsigned int>> tableOfTransitions; // table of states and their transitions to equivalence classes
     State NOclasses = 2;                                                // number of classes after the iteration
     State NOclassesPrev = 0;                                            // number of classes before the iteration
-
-    automaton.m_States.clear();    // erase the original states
-    automaton.m_States.emplace(0); // fill two initial classes
-    automaton.m_States.emplace(1);
 
     // first iteration -> divide to terminal and non-terminal states
     for (State state : automaton.m_States)
@@ -213,6 +214,12 @@ void equivalence(DFA &automaton)
             classToStates[0].emplace(state);
         }
     }
+    
+    automaton.m_States.clear();    // erase the original states
+    automaton.m_States.emplace(0); // fill two initial classes
+    automaton.m_States.emplace(1);
+
+    std::cout << "determinizing - entering while cycle" << std::endl;
 
     // create and check transition tables
     while (NOclassesPrev != NOclasses)
@@ -276,14 +283,17 @@ void equivalence(DFA &automaton)
         finalStates.emplace(stateToClass.at(state));
     }
     automaton.m_FinalStates = finalStates;
+    std::cout << "equivalized" << std::endl;
     return;
 }
 
 void minimize(DFA &automaton)
 {
+    std::cout << "minimizing" << std::endl;
     removeUnreachable(automaton);
     removeSuperfluous(automaton);
     equivalence(automaton);
+    std::cout << "minimized" << std::endl;
 }
 
 void unifyOne(const NFA &originalNFA, NFA &resultNFA, bool inverted)
@@ -346,7 +356,102 @@ DFA unify(const NFA &a, const NFA &b) // unify using epsilon transition in the p
     return resultDFA;
 }
 
-DFA intersect(const NFA &a, const NFA &b);
+DFA intersect(const NFA &a, const NFA &b)
+{
+    std::cout << "intersecting ..." << std::endl;
+    NFA resultNFA;
+
+    // unify alphabet
+    resultNFA.m_Alphabet = a.m_Alphabet;
+    std::set<Symbol> alphabet = b.m_Alphabet;
+    resultNFA.m_Alphabet.merge(alphabet);
+
+    // convert names of states
+    std::map<State, State> convertA;
+    std::map<State, State> convertB;
+    State NOStatesA = 0;
+    for (State state : a.m_States)
+    {
+        convertA.emplace(state, NOStatesA++);
+    }
+    State NOStatesB = -1;
+    for (State state : b.m_States)
+    {
+        convertB.emplace(state, NOStatesB--);
+    }
+
+    // BFS like
+    std::map<std::set<State>, State> setToState;
+    std::queue<std::set<State>> queue;
+    State NOStates = 0;
+
+    // add initial state
+    std::set<State> currentSetState{convertA.at(a.m_InitialState), convertB.at(b.m_InitialState)};
+    resultNFA.m_InitialState = NOStates;
+    setToState.emplace(currentSetState, NOStates++);
+
+    queue.push(std::move(currentSetState));
+    // intersect and convert transitions
+    while (!queue.empty())
+    {
+        currentSetState = queue.front();
+        queue.pop();
+
+        for (Symbol symbol : resultNFA.m_Alphabet)
+        {
+            std::set<State> nextStates;
+            for (State state : currentSetState)
+            {
+                std::set<State> tmp;
+                try
+                {
+                    if (a.m_States.find(state) != a.m_States.end())
+                    { // state is from automaton 'a'
+                        tmp = a.m_Transitions.at(std::make_pair(state, symbol));
+                    }
+                    else
+                    { // state is from automaton 'b'
+                        tmp = b.m_Transitions.at(std::make_pair(state, symbol));
+                    }
+                    nextStates.merge(tmp);
+                }
+                catch (...) // to catch exception for being out of bounds when the transition does not exist
+                {
+                    goto jumpIntersect; // one of the automata cannot continue -> end it
+                }
+            }
+            if (setToState.emplace(nextStates, NOStates).second) // try to insert as new state
+            {
+                NOStates++;
+                queue.push(nextStates);
+            }
+            resultNFA.m_Transitions.emplace(std::make_pair(setToState.at(currentSetState), symbol), std::set<State>());
+            resultNFA.m_Transitions.at(std::make_pair(setToState.at(currentSetState), symbol)).emplace(setToState.at(nextStates));
+        jumpIntersect:
+        continue;
+        }
+    }
+
+    // convert states and add final states
+    for (auto it = setToState.begin(); it != setToState.end(); ++it)
+    {
+        resultNFA.m_States.emplace(it->second);
+        for (State state : it->first) // if all states in the set are final states, add final state
+        {
+            if ((a.m_FinalStates.find(state) == a.m_FinalStates.end()) && (b.m_FinalStates.find(state) == b.m_FinalStates.end()))
+            {
+                goto notFinal; // jump over the addition into finals, if a state is not final
+            }
+        }
+        resultNFA.m_FinalStates.emplace(it->second);
+        notFinal:
+        continue;
+    }
+
+    DFA resultDFA = determinize(resultNFA);
+    minimize(resultDFA);
+    return resultDFA;
+}
 
 #ifndef __PROGTEST__
 
@@ -358,6 +463,7 @@ bool operator==(const DFA &a, const DFA &b)
 
 int main()
 {
+    std::cout << "START" << std::endl;
     NFA a1{
         {0, 1, 2},
         {'a', 'b'},
@@ -397,7 +503,9 @@ int main()
         0,
         {2},
     };
+    std::cout << "Start intersecting..." << std::endl;
     assert(intersect(a1, a2) == a);
+    std::cout << "SUCCESS intersecting" << std::endl;
 
     NFA b1{
         {0, 1, 2, 3, 4},
@@ -450,7 +558,9 @@ int main()
         0,
         {1, 5, 8},
     };
+    std::cout << "Start unifying..." << std::endl;
     assert(unify(b1, b2) == b);
+    std::cout << "SUCCESS unifying" << std::endl;
 
     NFA c1{
         {0, 1, 2, 3, 4},
@@ -483,7 +593,9 @@ int main()
         0,
         {},
     };
+    std::cout << "Start intersecting..." << std::endl;
     assert(intersect(c1, c2) == c);
+    std::cout << "SUCCESS intersecting" << std::endl;
 
     NFA d1{
         {0, 1, 2, 3},
@@ -529,6 +641,9 @@ int main()
         0,
         {1, 2, 3},
     };
+    std::cout << "Start intersecting..." << std::endl;
     assert(intersect(d1, d2) == d);
+    std::cout << "SUCCESS intersecting" << std::endl;
+    std::cout << "!!! SUCCESS !!!" << std::endl;
 }
 #endif
