@@ -32,85 +32,125 @@ struct TreeProblem
 
 struct Vertex
 {
-  Vertex(uint64_t gifts, ChristmasTree number) : giftsVertexIncluded(gifts), ID(number) {}
-  uint64_t giftsVertexIncluded;
-  uint64_t giftsVertexExcluded = 0;
-  ChristmasTree ID;
-  ChristmasTree father = 0;
-  std::vector<ChristmasTree> sons;
+  Vertex(uint64_t gifts, ChristmasTree number) : giftsVertexIncluded(gifts), giftsVertexIncluded2(gifts), ID(number) {}
+  uint64_t giftsVertexIncluded; // vertex in group of 1
+  u_int64_t giftsVertexIncluded2; // vertex in group of 2
+  uint64_t giftsVertexExcluded = 0; // vertex is excluded
+  ChristmasTree ID; // id of the vertex
+  ChristmasTree father = 0; // id of the father of this vertex
+  std::vector<ChristmasTree> relatives; // ids of all relatives
 
+  // is it better to be excluded or in group of 1
   uint64_t maxGifts()
   {
     return (giftsVertexExcluded < giftsVertexIncluded) ? giftsVertexIncluded : giftsVertexExcluded;
+  }
+
+  // is it better to be excluded / in group of 1 / in group of 2
+  uint64_t maxGifts2()
+  {
+    return std::max({giftsVertexIncluded, giftsVertexIncluded2, giftsVertexExcluded});
+  }
+
+  // returns the difference in gifts if vertex is included/excluded
+  // if excluded > included => return 0
+  uint64_t diff()
+  {
+    if(giftsVertexIncluded > giftsVertexExcluded)
+    {
+      return giftsVertexIncluded - giftsVertexExcluded;
+    }
+    else
+    {
+      return 0;
+    }
   }
 };
 
 uint64_t solve(const TreeProblem &town)
 {
   // structures, variables
-  ChristmasTree NOVertices = 0;
-  Vertex* vertex;
-  Vertex* vertexSon;
-  std::deque<Vertex*> stack;
-  std::queue<Vertex*> queue;
+  ChristmasTree NOVertices = 0; // total number of vertices
+  uint64_t giftsOfSonIncluded; // difference if the son is included as well (opt 2)
+  Vertex *vertex;
+  Vertex *vertexSon;
+  std::deque<Vertex *> stack; // own stack in topological order -> stocks are on the top
+  std::queue<Vertex *> queue;
   std::vector<Vertex> vertices;
-  
 
-  //std::cout << "counting vertices: ";
-  // counting vertices
-  for(uint64_t gift : town.gifts)
+  //  counting vertices
+  for (uint64_t gift : town.gifts)
   {
     vertices.emplace_back(gift, NOVertices++);
   }
-  //std::cout << NOVertices << std::endl;
 
-  //std::cout << "symetrization" << std::endl;
-  // symetrization of connections
-  for(const auto & connection : town.connections)
+  //  symetrization of connections
+  for (const auto &connection : town.connections)
   {
-    vertices.at(connection.first).sons.push_back(connection.second);
-    vertices.at(connection.second).sons.push_back(connection.first);
+    vertices.at(connection.first).relatives.push_back(connection.second);
+    vertices.at(connection.second).relatives.push_back(connection.first);
   }
 
-  //std::cout << "create spanning-tree" << std::endl;
-  // BFS to create a spanning-tree
+  //  BFS to create a spanning-tree
   queue.push(&vertices.at(0));
   stack.push_back(&vertices.at(0));
-  while(!queue.empty())
+  while (!queue.empty())
   {
     vertex = queue.front();
     queue.pop();
-    for(ChristmasTree son : vertex->sons)
+    for (ChristmasTree son : vertex->relatives)
     {
-      if(son != vertex->father)
+      if (son != vertex->father)
       {
         vertexSon = &vertices.at(son);
-        vertexSon->father = vertex->ID;
+        vertexSon->father = vertex->ID; // assign father vertex
         stack.push_back(vertexSon);
         queue.push(vertexSon);
       }
     }
   }
 
-  // memoziation
-  //std::cout << "do memoziation" << std::endl;
-  while(!stack.empty())
-  {
-    vertex = stack.back();
-    stack.pop_back();
-    for(ChristmasTree son : vertex->sons)
+  // differentiate between options
+  if (town.max_group_size < 2)
+  { // size of groups of policemen is 1
+    // memoziation
+    while (!stack.empty())
     {
-      if(son != vertex->father)
+      vertex = stack.back();
+      stack.pop_back();
+      for (ChristmasTree son : vertex->relatives)
       {
-        vertexSon = &vertices.at(son);
-        vertex->giftsVertexIncluded += vertexSon->giftsVertexExcluded;
-        vertex->giftsVertexExcluded += vertexSon->maxGifts();
+        if (son != vertex->father) // sum gifts only for sons
+        {
+          vertexSon = &vertices.at(son);
+          vertex->giftsVertexIncluded += vertexSon->giftsVertexExcluded; // option if vertex is included
+          vertex->giftsVertexExcluded += vertexSon->maxGifts(); // option if vertex is excluded
+        }
       }
     }
+    return vertices.at(0).maxGifts(); // return the maximum in root from excluded/included
   }
-  
-  //std::cout << "return maxGifts of 0: " << vertices.at(0).maxGifts() << " from: " << vertices.at(0).giftsVertexExcluded << "/" << vertices.at(0).giftsVertexIncluded << std::endl;
-  return vertices.at(0).maxGifts();
+  else
+  { // policemen go in groups of two
+    while(!stack.empty())
+    {
+      vertex = stack.back();
+      stack.pop_back();
+      giftsOfSonIncluded = 0; // set difference to 0
+      for (ChristmasTree son : vertex->relatives)
+      {
+        if (son != vertex->father)
+        {
+          vertexSon = &vertices.at(son);
+          vertex->giftsVertexIncluded += vertexSon->giftsVertexExcluded; // option vertex is included solo
+          vertex->giftsVertexExcluded += vertexSon->maxGifts2(); // option vertex is excluded
+          giftsOfSonIncluded = std::max({giftsOfSonIncluded, vertexSon->diff()}); // save the maximal difference if a son is included as well in a group
+        }
+      }
+      vertex->giftsVertexIncluded2 = vertex->giftsVertexIncluded + giftsOfSonIncluded;  // option vertex is in group -> include the son with the highest difference
+    }
+    return vertices.at(0).maxGifts2(); // choose maximum from options in root
+  }
 }
 
 #ifndef __PROGTEST__
@@ -260,6 +300,9 @@ const std::vector<TestCase> BASIC_TESTS = {
 const std::vector<TestCase> BONUS_TESTS = {
     {3, {2, {1, 1, 1, 2}, {{0, 3}, {1, 3}, {2, 3}}}},
     {5, {2, {1, 1, 1, 4}, {{0, 3}, {1, 3}, {2, 3}}}},
+    {7, {2, {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {{0, 1}, {2, 1}, {2,3}, {3,4}, {5,3}, {2,6}, {6,7}, {6,8}, {6,9}}}},
+    {9, {2, {1, 1, 1, 1, 1, 1, 4, 1, 1, 1}, {{0, 1}, {2, 1}, {2,3}, {3,4}, {5,3}, {2,6}, {6,7}, {6,8}, {6,9}}}},
+    {11, {2, {1, 1, 4, 1, 1, 1, 4, 1, 1, 1}, {{0, 1}, {2, 1}, {2,3}, {3,4}, {5,3}, {2,6}, {6,7}, {6,8}, {6,9}}}},
 };
 
 void test(const std::vector<TestCase> &T)
@@ -277,7 +320,7 @@ void test(const std::vector<TestCase> &T)
 int main()
 {
   test(BASIC_TESTS);
-  // test(BONUS_TESTS);
+  test(BONUS_TESTS);
 }
 
 #endif
