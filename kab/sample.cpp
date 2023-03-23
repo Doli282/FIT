@@ -69,9 +69,9 @@ int myCheckHash(int bits, unsigned char byteHash[])
     }
     
     int zeroBits = (bits%8);
-    char mask = 0b10000000;
+    unsigned char mask = 0b11111111;
     unsigned char result = 0b10000000;
-    mask = mask >> zeroBits;
+    mask = mask << (7 - zeroBits);
     result = result >> zeroBits;
     if((byteHash[offset] & mask) != result) return 0;
     return 1;
