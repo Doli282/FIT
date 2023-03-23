@@ -1,0 +1,1521 @@
+Add company
+launch CTs
+Initializing communication threads
+set first Solver
+launch WTs
+launch WTs
+WT-119289600- : launching
+WT-119289600- : in front of while
+WT-119289600- : locking  'ul_addProblem'
+WT-119289600- : got 'ul_addProblem'
+WT-119289600- : unlocking  'ul_addProblem'
+WT-119289600- : locking 'mt_globalQueue'
+WT-119289600- : sleeping on 'cv_global'
+WT-110896896- : launching
+WT-110896896- : in front of while
+WT-110896896- : locking  'ul_addProblem'
+WT-110896896- : got 'ul_addProblem'
+WT-110896896- : unlocking  'ul_addProblem'
+WT-110896896- : locking 'mt_globalQueue'
+WT-110896896- : sleeping on 'cv_global'
+<-ST-102504192- : launching
+<-ST-102504192- : sleeping on 'sem_submit'
+launch WTs
+launch WTs
+STOP
+wait for RT
+->RT-94111488- : launching
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : set iterator on unporcessed Packs
+->RT-94111488- : waking one on 'cv_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : finishing
+WT-136075008- : launching
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : unlocking  'ul_addProblem'
+WT-136075008- : locking 'mt_globalQueue'
+WT-127682304- : launching
+WT-127682304- : in front of while
+WT-127682304- : locking  'ul_addProblem'
+WT-127682304- : got 'ul_addProblem'
+WT-127682304- : unlocking  'ul_addProblem'
+WT-127682304- : locking 'mt_globalQueue'
+wait for WT
+WT-119289600- : locking  'ul_addProblem'
+WT-119289600- : got 'ul_addProblem'
+WT-119289600- : unlocking  'ul_addProblem'
+WT-119289600- : locking 'mt_globalQueue'
+WT-119289600- : sleeping on 'cv_global'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+WT-136075008- : sleeping on 'cv_global'
+WT-127682304- : sleeping on 'cv_global'
+Add company
+launch CTs
+Initializing communication threads
+set first Solver
+launch WTs
+launch WTs
+launch WTs
+launch WTs
+STOP
+wait for RT
+WT-119289600- : launching
+WT-119289600- : in front of while
+WT-119289600- : locking  'ul_addProblem'
+WT-119289600- : got 'ul_addProblem'
+WT-119289600- : unlocking  'ul_addProblem'
+WT-119289600- : locking 'mt_globalQueue'
+WT-119289600- : sleeping on 'cv_global'
+->RT-94111488- : launching
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : set iterator on unporcessed Packs
+->RT-94111488- : waking one on 'cv_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : got new pack
+->RT-94111488- : waiting for 'mt_globalQueue'
+->RT-94111488- : got 'mt_globalQueue'
+->RT-94111488- : finishing
+WT-136075008- : launching
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : ProblemPack only partialy solved
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : problemSolver is full
+WT-136075008- : unlock 'ul_addProblem' 1
+WT-136075008- : solve problemSolver
+WT-136075008- : problemSolver solved
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : wake ST
+WT-136075008- : erase from globalWaitingQueue
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : set iterator for problemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : adding Problem to ProblemSolver
+WT-136075008- : check for 'ul_addProblem' 2
+WT-136075008- : unlock 'ul_addProblem' 2
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : behind while
+WT-136075008- : set iterator for unprocessedPacks
+WT-136075008- : unlock 'ul_addProblem' 3
+WT-136075008- : in front of while
+WT-136075008- : locking  'ul_addProblem'
+WT-136075008- : got 'ul_addProblem'
+WT-136075008- : unlocking  'ul_addProblem'
+WT-136075008- : locking 'mt_globalQueue'
+<-ST-102504192- : launching
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : submitting problemPack
+<-ST-102504192- : problemPack submitted'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+<-ST-102504192- : looking for completed problemPack
+<-ST-102504192- : sleeping on 'sem_submit'
+WT-127682304- : launching
+WT-127682304- : in front of while
+WT-127682304- : locking  'ul_addProblem'
+WT-127682304- : got 'ul_addProblem'
+WT-127682304- : unlocking  'ul_addProblem'
+WT-127682304- : locking 'mt_globalQueue'
+WT-119289600- : locking  'ul_addProblem'
+WT-119289600- : got 'ul_addProblem'
+WT-119289600- : unlocking  'ul_addProblem'
+WT-119289600- : locking 'mt_globalQueue'
+WT-119289600- : sleeping on 'cv_global'
+WT-110896896- : launching
+WT-110896896- : in front of while
+WT-110896896- : locking  'ul_addProblem'
+WT-110896896- : got 'ul_addProblem'
+WT-110896896- : unlocking  'ul_addProblem'
+WT-110896896- : locking 'mt_globalQueue'
+WT-110896896- : sleeping on 'cv_global'
+WT-136075008- : sleeping on 'cv_global'
+WT-127682304- : sleeping on 'cv_global'
+wait for WT
