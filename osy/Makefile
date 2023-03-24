@@ -10,7 +10,7 @@ all: test
 deps:
 	g++ -MM *.cpp > Makefile.d
 
-test: solution.o sample_tester.o
+test: solution_GPTS.o sample_tester.o
 	$(LD) $(CXXFLAGS) -o $@ $^ -L./$(MACHINE) -lprogtest_solver -lpthread
 
 %.o: %.cpp
