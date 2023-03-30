@@ -1,3 +1,5 @@
+// Created: Lukas Dolansky (dolanluk) 2023/03/30
+
 #ifndef __PROGTEST__
 #include <cstdlib>
 #include <cstdio>
@@ -31,17 +33,164 @@ struct crypto_config
 
 #endif /* _PROGTEST_ */
 
-bool encrypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config )
+// check if crypto_config is correct
+bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config)
+{
+	// check if cipher mode does use inicialization vector
+	unsigned int mode = EVP_CIPHER_mode(cipher);
+	if((EVP_CIPH_ECB_MODE == mode) || (mode == EVP_CIPH_CTR_MODE))
+	{
+		// check if IV is long enough
+		size_t iv_len = EVP_CIPHER_iv_length(cipher);
+		if(iv_len > config.m_IV_len)
+		{
+			// generate new IV
+			if(RAND_bytes(config.m_IV.get(), iv_len) != 1)
+			{
+				return false;
+			}
+			config.m_IV_len = iv_len;
+		}
+	}
+
+	//check if key is long enough
+	size_t key_len = EVP_CIPHER_key_length(cipher);
+	if((key_len > config.m_key_len))
+	{
+		// generate new IV
+		if(RAND_bytes(config.m_key.get(), key_len) != 1)
+		{
+			return false;
+		}
+		config.m_key_len = key_len;
+	}
+	return true;
+}
+
+// 1 encryption, 0 decryption
+bool crypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config, int encryptOption)
 {
 	const unsigned int HEADER_SIZE = 18;
-	unsigned char * header[HEADER_SIZE];
+	const unsigned int BUFFER_SIZE = 512; // AES - block = 16 bytes -> 128 bits -> max 256 bits
+	const unsigned int READ_SIZE = 256;
+	const size_t SIZE_OF_BLOCK = sizeof(unsigned char);
 
+	bool correct = true;
+
+	FILE * inFile;
+	FILE * outFile;
+	int read;
+	int written;
+	int cipherTextLength;
+
+	unsigned char OT[BUFFER_SIZE];
+	unsigned char ST[BUFFER_SIZE];
+
+	EVP_CIPHER_CTX * ctx;
+	const EVP_CIPHER * cipher;
+
+	OpenSSL_add_all_algorithms();
+
+	//check configuration
+	if(!(cipher = EVP_get_cipherbyname(config.m_crypto_function)))
+	{
+		return false;
+	}
+	if(!(checkConfiguration(cipher, config)))
+	{
+		return false;
+	}
+
+	// create new context
+	if(!(ctx = EVP_CIPHER_CTX_new()))
+	{
+		return false;
+	}
 	
+	// open files
+	if(!(inFile = fopen(in_filename.c_str(), "rb")))
+	{
+		EVP_CIPHER_CTX_free(ctx);
+		return false;
+	}
+	if(!(outFile = fopen(out_filename.c_str(), "wb")))
+	{
+		EVP_CIPHER_CTX_free(ctx);
+		std::fclose(inFile);
+		return false;
+	}
+
+	// read header and write header
+	if((read = fread(OT, SIZE_OF_BLOCK, HEADER_SIZE, inFile)) != HEADER_SIZE)
+	{
+		correct = false;
+		goto end;
+	}
+	if((written = fwrite(OT,SIZE_OF_BLOCK, HEADER_SIZE, outFile)) != HEADER_SIZE)
+	{
+		correct = false;
+		goto end;
+	}
+
+	// inicialization of ecryption
+	//EVP_EncryptInit_ex(ctx, type, NULL, key, iv);
+	if(!(EVP_CipherInit_ex(ctx, cipher, NULL, config.m_key.get(), config.m_IV.get(), encryptOption)))
+	{
+		correct = false;
+		goto end;
+	}
+
+	while(true)
+	{
+		// read next block
+		if((read = fread(OT, SIZE_OF_BLOCK, READ_SIZE, inFile)) == 0)
+		{
+			break;
+		}
+		// cipher the block
+		if(!EVP_CipherUpdate(ctx, ST, &cipherTextLength, OT, read))
+		{
+			correct = false;
+			goto end;
+		}
+		// write the block
+		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+		{
+			correct = false;
+			goto end;
+		}
+	}
+
+	// finalize cryption
+	if(!(EVP_CipherFinal_ex(ctx, ST, &cipherTextLength)))
+	{
+		correct = false;
+		goto end;
+	}
+
+	// write the block
+	if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+	{
+		correct = false;
+		goto end;
+	}
+
+end:
+	EVP_CIPHER_CTX_free(ctx);
+	std::fclose(inFile);
+	std::fclose(outFile);
+	
+	return correct;	
+}
+
+bool encrypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config )
+{
+	return crypt_data(in_filename, out_filename, config, 1);
 }
 
 bool decrypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config )
 {
-
+	return crypt_data(in_filename, out_filename, config, 0);
 }
 
 
@@ -49,24 +198,24 @@ bool decrypt_data ( const std::string & in_filename, const std::string & out_fil
 
 bool compare_files ( const char * name1, const char * name2 )
 {
-	size_t BUFFER_SIZE = 512;
+	const size_t BUFFER_SIZE = 512;
 	bool correct = true;
 	
 	FILE * file1;
 	FILE * file2;
 	size_t read1;
 	size_t read2;
-	unsigned char * buffer1[BUFFER_SIZE];
-	unsigned char * buffer2[BUFFER_SIZE];
+	unsigned char buffer1[BUFFER_SIZE];
+	unsigned char buffer2[BUFFER_SIZE];
 
 	// open files
-	if(file1 = fopen(name1, "rb"))
+	if(!(file1 = fopen(name1, "rb")))
 	{
 		return false;
 	}
-	if(file2 = fopen(name2, "rb"))
+	if(!(file2 = fopen(name2, "rb")))
 	{
-		fclose(file1);
+		std::fclose(file1);
 		return false;
 	}
 
@@ -98,8 +247,8 @@ bool compare_files ( const char * name1, const char * name2 )
 	}
 
 	// close files and return
-	fclose(file1);
-	fclose(file2);
+	std::fclose(file1);
+	std::fclose(file2);
 	return correct;
 }
 
@@ -166,6 +315,7 @@ int main ( void )
 
 	assert( decrypt_data ("image_8_enc_cbc.TGA", "out_file.TGA", config)  &&
 		    compare_files("out_file.TGA", "ref_8_dec_cbc.TGA") );
+	printf("SUCCESS\n");
 	return 0;
 }
 
