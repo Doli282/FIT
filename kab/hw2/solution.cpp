@@ -33,7 +33,10 @@ struct crypto_config
 
 bool encrypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config )
 {
+	const unsigned int HEADER_SIZE = 18;
+	unsigned char * header[HEADER_SIZE];
 
+	
 }
 
 bool decrypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config )
@@ -46,7 +49,58 @@ bool decrypt_data ( const std::string & in_filename, const std::string & out_fil
 
 bool compare_files ( const char * name1, const char * name2 )
 {
+	size_t BUFFER_SIZE = 512;
+	bool correct = true;
+	
+	FILE * file1;
+	FILE * file2;
+	size_t read1;
+	size_t read2;
+	unsigned char * buffer1[BUFFER_SIZE];
+	unsigned char * buffer2[BUFFER_SIZE];
 
+	// open files
+	if(file1 = fopen(name1, "rb"))
+	{
+		return false;
+	}
+	if(file2 = fopen(name2, "rb"))
+	{
+		fclose(file1);
+		return false;
+	}
+
+	while(correct)
+	{
+		// read bytes from files
+		read1 = fread(buffer1, sizeof(buffer1[0]), BUFFER_SIZE, file1);
+		read2 = fread(buffer2, sizeof(buffer2[0]), BUFFER_SIZE, file2);
+		// check if the number of read bytes is the same
+		if(read1 != read2)
+		{
+			correct = false;
+			break;
+		}
+		// check for every byte if they are the same
+		for(size_t i = 0; i < read1; i++)
+		{
+			if(buffer1[i] != buffer2[i])
+			{
+				correct = false;
+				break;
+			}
+		}
+		// read less than buffer? -> reached the EOF
+		if(read1 < BUFFER_SIZE)
+		{
+			break;
+		}
+	}
+
+	// close files and return
+	fclose(file1);
+	fclose(file2);
+	return correct;
 }
 
 int main ( void )
