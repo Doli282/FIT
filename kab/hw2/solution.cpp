@@ -1,4 +1,4 @@
-// Created: Lukas Dolansky (dolanluk) 2023/03/30
+// Created: Lukas Dolansky (dolanluk)
 
 #ifndef __PROGTEST__
 #include <cstdlib>
@@ -34,17 +34,26 @@ struct crypto_config
 #endif /* _PROGTEST_ */
 
 // check if crypto_config is correct
-bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config)
+// encrypt = 1 for encryption / 0 for decryption
+bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config, int encrypt)
 {
 	// check if cipher mode does use inicialization vector
 	unsigned int mode = EVP_CIPHER_mode(cipher);
-	if((EVP_CIPH_ECB_MODE == mode) || (mode == EVP_CIPH_CTR_MODE))
+	//printf("mode = %u\n", mode);
+	if(!((EVP_CIPH_ECB_MODE == mode) || (mode == EVP_CIPH_CTR_MODE)))
 	{
 		// check if IV is long enough
 		size_t iv_len = EVP_CIPHER_iv_length(cipher);
-		if(iv_len > config.m_IV_len)
+		//printf("iv size = %lu\n", iv_len);
+		if((config.m_IV == nullptr) || (iv_len > config.m_IV_len))
 		{
+			if(encrypt == 0) // decrypt function can not create new IV
+			{
+				return false;
+			}
 			// generate new IV
+			//printf("generating new iv\n");
+			config.m_IV = make_unique<uint8_t[]>(iv_len);
 			if(RAND_bytes(config.m_IV.get(), iv_len) != 1)
 			{
 				return false;
@@ -55,9 +64,17 @@ bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config)
 
 	//check if key is long enough
 	size_t key_len = EVP_CIPHER_key_length(cipher);
-	if((key_len > config.m_key_len))
+	//printf("key size = %lu / %lu\n", key_len, config.m_key_len);
+
+	if((config.m_key == nullptr) || (key_len > config.m_key_len))
 	{
-		// generate new IV
+		if(encrypt == 0) // decrypt function can not create new key
+		{
+			return false;
+		}
+		// generate new key
+		//printf("generating new key (%lu)\n", config.m_key_len);
+		config.m_key = make_unique<uint8_t[]>(key_len);
 		if(RAND_bytes(config.m_key.get(), key_len) != 1)
 		{
 			return false;
@@ -70,9 +87,10 @@ bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config)
 // 1 encryption, 0 decryption
 bool crypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config, int encryptOption)
 {
+	//printf("new encryption (%d)\n", encryptOption);
 	const unsigned int HEADER_SIZE = 18;
-	const unsigned int BUFFER_SIZE = 512; // AES - block = 16 bytes -> 128 bits -> max 256 bits
-	const unsigned int READ_SIZE = 256;
+	const unsigned int BUFFER_SIZE = 256; // AES - block = 16 bytes -> 128 bits -> max 256 bits
+	const unsigned int READ_SIZE = 128;
 	const size_t SIZE_OF_BLOCK = sizeof(unsigned char);
 
 	bool correct = true;
@@ -86,20 +104,20 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 	unsigned char OT[BUFFER_SIZE];
 	unsigned char ST[BUFFER_SIZE];
 
-	EVP_CIPHER_CTX * ctx;
-	const EVP_CIPHER * cipher;
-
 	OpenSSL_add_all_algorithms();
+	EVP_CIPHER_CTX * ctx;
+	const EVP_CIPHER * cipher = EVP_get_cipherbyname(config.m_crypto_function);
 
 	//check configuration
-	if(!(cipher = EVP_get_cipherbyname(config.m_crypto_function)))
+	if(!cipher)
 	{
 		return false;
 	}
-	if(!(checkConfiguration(cipher, config)))
+	if(!(checkConfiguration(cipher, config, encryptOption)))
 	{
 		return false;
 	}
+	//printf("Checked\n");
 
 	// create new context
 	if(!(ctx = EVP_CIPHER_CTX_new()))
@@ -143,7 +161,7 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 	while(true)
 	{
 		// read next block
-		if((read = fread(OT, SIZE_OF_BLOCK, READ_SIZE, inFile)) == 0)
+		if((read = fread(OT, SIZE_OF_BLOCK, READ_SIZE, inFile)) <= 0)
 		{
 			break;
 		}
@@ -160,7 +178,7 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 			goto end;
 		}
 	}
-
+	//printf("end reading\n");
 	// finalize cryption
 	if(!(EVP_CipherFinal_ex(ctx, ST, &cipherTextLength)))
 	{
@@ -174,7 +192,7 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 		correct = false;
 		goto end;
 	}
-
+	//printf("successful end (%d)\n", correct);
 end:
 	EVP_CIPHER_CTX_free(ctx);
 	std::fclose(inFile);
@@ -228,6 +246,7 @@ bool compare_files ( const char * name1, const char * name2 )
 		if(read1 != read2)
 		{
 			correct = false;
+			printf("read1(%lu) != read2(%lu)\n", read1, read2);
 			break;
 		}
 		// check for every byte if they are the same
@@ -235,6 +254,7 @@ bool compare_files ( const char * name1, const char * name2 )
 		{
 			if(buffer1[i] != buffer2[i])
 			{
+				printf("buffer1[%lu] (%u) != (%u)buffer2[%lu]\n", i, buffer1[i], buffer2[i], i);
 				correct = false;
 				break;
 			}
@@ -256,6 +276,67 @@ int main ( void )
 {
 	crypto_config config {nullptr, nullptr, nullptr, 0, 0};
 
+	printf("ECB invalid key length\n");
+	config.m_crypto_function = "AES-128-ECB";
+	config.m_key_len = 2;
+	config.m_key = std::make_unique<uint8_t[]>(2);
+	memset(config.m_key.get(), 0, 2);
+	assert( encrypt_data  ("homer-simpson.TGA", "out_file.TGA", config) &&
+			decrypt_data  ("out_file.TGA", "out_file2.TGA", config) &&
+			compare_files ("out_file2.TGA", "homer-simpson.TGA") );
+
+	printf("ECB larger key\n");
+	config.m_crypto_function = "AES-128-ECB";
+	config.m_key_len = 20;
+	config.m_key = std::make_unique<uint8_t[]>(20);
+	memset(config.m_key.get(), 0, 20);
+	assert( encrypt_data  ("homer-simpson.TGA", "out_file.TGA", config) &&
+			decrypt_data  ("out_file.TGA", "out_file2.TGA", config) &&
+			compare_files ("out_file2.TGA", "homer-simpson.TGA") );
+	
+	printf("CBC without key and IV\n");
+	config.m_crypto_function = "AES-128-CBC";
+	config.m_key = nullptr;
+	config.m_key_len = 0;
+	config.m_IV = nullptr;
+	config.m_IV_len = 0;
+	assert( encrypt_data  ("UCM8.TGA", "out_file.TGA", config) &&
+			decrypt_data  ("out_file.TGA", "out_file2.TGA", config) &&
+			compare_files ("out_file2.TGA", "UCM8.TGA") );
+
+	printf("CBC without key and IV but has length\n");
+	config.m_crypto_function = "AES-128-CBC";
+	config.m_key = nullptr;
+	config.m_key_len = 20;
+	config.m_IV = nullptr;
+	config.m_IV_len = 20;
+	assert( encrypt_data  ("UCM8.TGA", "out_file.TGA", config) &&
+			decrypt_data  ("out_file.TGA", "out_file2.TGA", config) &&
+			compare_files ("out_file2.TGA", "UCM8.TGA") );
+
+	printf("CBC larger key and IV\n");
+	config.m_crypto_function = "AES-128-CBC";
+	config.m_key_len = 20;
+	config.m_key = std::make_unique<uint8_t[]>(20);
+	memset(config.m_key.get(), 0, 20);
+	config.m_IV_len = 20;
+	config.m_IV = std::make_unique<uint8_t[]>(20);
+	memset(config.m_IV.get(), 0, 20);
+	assert( encrypt_data  ("UCM8.TGA", "out_file.TGA", config) &&
+			decrypt_data  ("out_file.TGA", "out_file2.TGA", config) &&
+			compare_files ("out_file2.TGA", "UCM8.TGA") );
+
+	printf("noexistent input file\n");
+	assert(! (encrypt_data("invalid_File.TGA", "out_file2.TGA", config)));
+	printf("Invalid header in input file\n");
+	assert(! (encrypt_data("invalid_Header.TGA", "out_file2.TGA", config)));
+	printf("Invalid Read\n");
+	assert(! (encrypt_data("nonreadable.TGA", "out_file2.TGA", config)));
+	printf("Invalid Write\n");
+	assert(! (encrypt_data("out_file2.TGA", "nonwritable.TGA", config)));
+
+	printf("Invalid Inputs - SUCCESS\n");
+	
 	// ECB mode
 	config.m_crypto_function = "AES-128-ECB";
 	config.m_key = std::make_unique<uint8_t[]>(16);
