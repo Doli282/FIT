@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import unittest
 import random
@@ -10,7 +10,7 @@ import collision
 
 class test(unittest.TestCase):
     def singleTest(self, value):
-        print "message %s" % value
+        print("message %s" % value)
         h = insecure_hash.hash_string(value)
         c = collision.find_collision(value)
         self.assertTrue(c != value) # the function should not return value directly
