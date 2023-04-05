@@ -39,20 +39,18 @@ bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config, int e
 {
 	// check if cipher mode does use inicialization vector
 	unsigned int mode = EVP_CIPHER_mode(cipher);
-	//printf("mode = %u\n", mode);
 	if(!((EVP_CIPH_ECB_MODE == mode) || (mode == EVP_CIPH_CTR_MODE)))
 	{
 		// check if IV is long enough
 		size_t iv_len = EVP_CIPHER_iv_length(cipher);
-		//printf("iv size = %lu\n", iv_len);
 		if((config.m_IV == nullptr) || (iv_len > config.m_IV_len))
 		{
-			if(encrypt == 0) // decrypt function can not create new IV
+			// decrypt function can not create new IV
+			if(encrypt == 0)
 			{
 				return false;
 			}
-			// generate new IV
-			//printf("generating new iv\n");
+			// generate new IV for encryption
 			config.m_IV = make_unique<uint8_t[]>(iv_len);
 			if(RAND_bytes(config.m_IV.get(), iv_len) != 1)
 			{
@@ -64,16 +62,14 @@ bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config, int e
 
 	//check if key is long enough
 	size_t key_len = EVP_CIPHER_key_length(cipher);
-	//printf("key size = %lu / %lu\n", key_len, config.m_key_len);
-
 	if((config.m_key == nullptr) || (key_len > config.m_key_len))
 	{
-		if(encrypt == 0) // decrypt function can not create new key
+		// decrypt function can not create new key
+		if(encrypt == 0) 
 		{
 			return false;
 		}
-		// generate new key
-		//printf("generating new key (%lu)\n", config.m_key_len);
+		// generate new key for encryption
 		config.m_key = make_unique<uint8_t[]>(key_len);
 		if(RAND_bytes(config.m_key.get(), key_len) != 1)
 		{
@@ -87,13 +83,13 @@ bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config, int e
 // 1 encryption, 0 decryption
 bool crypt_data ( const std::string & in_filename, const std::string & out_filename, crypto_config & config, int encryptOption)
 {
-	//printf("new encryption (%d)\n", encryptOption);
-	const unsigned int HEADER_SIZE = 18;
-	const unsigned int BUFFER_SIZE = 256; // AES - block = 16 bytes -> 128 bits -> max 256 bits
-	const unsigned int READ_SIZE = 128;
+	const unsigned int HEADER_SIZE = 18; // header of the .TGA file
+	const unsigned int BLOCK_SIZE = 128; // AES - block = 16 bytes -> 128 bits
+	const unsigned int BUFFER_SIZE = 1024;  // should be larger than BLOCK_SIZE
+	const unsigned int READ_SIZE = BUFFER_SIZE;
 	const size_t SIZE_OF_BLOCK = sizeof(unsigned char);
 
-	bool correct = true;
+	bool correct = true; // flag if everything is going smoothly
 
 	FILE * inFile;
 	FILE * outFile;
@@ -102,7 +98,7 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 	int cipherTextLength;
 
 	unsigned char OT[BUFFER_SIZE];
-	unsigned char ST[BUFFER_SIZE];
+	unsigned char ST[BUFFER_SIZE+BLOCK_SIZE];
 
 	OpenSSL_add_all_algorithms();
 	EVP_CIPHER_CTX * ctx;
@@ -117,7 +113,6 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 	{
 		return false;
 	}
-	//printf("Checked\n");
 
 	// create new context
 	if(!(ctx = EVP_CIPHER_CTX_new()))
@@ -151,20 +146,32 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 	}
 
 	// inicialization of ecryption
-	//EVP_EncryptInit_ex(ctx, type, NULL, key, iv);
 	if(!(EVP_CipherInit_ex(ctx, cipher, NULL, config.m_key.get(), config.m_IV.get(), encryptOption)))
 	{
 		correct = false;
 		goto end;
 	}
 
+	// loop for reading the input file, en/decrypting and wirting to output file
 	while(true)
 	{
 		// read next block
-		if((read = fread(OT, SIZE_OF_BLOCK, READ_SIZE, inFile)) <= 0)
+		if((read = fread(OT, SIZE_OF_BLOCK, READ_SIZE, inFile)) < (int)READ_SIZE)
 		{
-			break;
+			// check if EOF or error occured
+			if(feof(inFile))
+			{
+				//printf("feof\n");
+				break;
+			}
+			else if(ferror(inFile))
+			{
+				//printf("reading error\n");
+				correct = false;
+				goto end;
+			}
 		}
+
 		// cipher the block
 		if(!EVP_CipherUpdate(ctx, ST, &cipherTextLength, OT, read))
 		{
@@ -178,7 +185,23 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 			goto end;
 		}
 	}
-	//printf("end reading\n");
+
+	// cipher the last block
+	if(read != 0)
+	{
+		if(!EVP_CipherUpdate(ctx, ST, &cipherTextLength, OT, read))
+		{
+			correct = false;
+			goto end;
+		}
+		// write the block
+		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+		{
+			correct = false;
+			goto end;
+		}
+	}
+
 	// finalize cryption
 	if(!(EVP_CipherFinal_ex(ctx, ST, &cipherTextLength)))
 	{
@@ -192,7 +215,8 @@ bool crypt_data ( const std::string & in_filename, const std::string & out_filen
 		correct = false;
 		goto end;
 	}
-	//printf("successful end (%d)\n", correct);
+
+	// cleanup
 end:
 	EVP_CIPHER_CTX_free(ctx);
 	std::fclose(inFile);
