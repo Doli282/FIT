@@ -1,4 +1,4 @@
-// Created: Lukas Dolansky (dolanluk)
+// Created by Lukas Dolansky (dolanluk)
 
 #ifndef __PROGTEST__
 #include <cstdlib>
@@ -37,12 +37,11 @@ struct crypto_config
 // encrypt = 1 for encryption / 0 for decryption
 bool checkConfiguration(const EVP_CIPHER * cipher, crypto_config & config, int encrypt)
 {
-	// check if cipher mode does use inicialization vector
-	unsigned int mode = EVP_CIPHER_mode(cipher);
-	if(!((EVP_CIPH_ECB_MODE == mode) || (mode == EVP_CIPH_CTR_MODE)))
+	// check if cipher mode does use inicialization vector (it is larger than 0)
+	size_t iv_len = EVP_CIPHER_iv_length(cipher);
+	if(iv_len != 0)
 	{
 		// check if IV is long enough
-		size_t iv_len = EVP_CIPHER_iv_length(cipher);
 		if((config.m_IV == nullptr) || (iv_len > config.m_IV_len))
 		{
 			// decrypt function can not create new IV
