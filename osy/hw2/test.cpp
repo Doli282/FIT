@@ -133,6 +133,7 @@ void t_bitset::clean()
 }
 //------------------------- BITSET ^^---------------------------------
 
+/// @brief Zero out all global variables
 void clean()
 {
   memorySize = 0;
@@ -169,10 +170,11 @@ void bind(unsigned int exponent, POINTER chunk)
 /// @param allocated 0 for free block; 1 for allocated block
 void prepareHeaders(POINTER blockStart, uintptr_t blockSize, uintptr_t allocated)
 {
-  blockStart[(blockSize - HEADER_SIZE)/POINTER_SIZE] = *blockStart = blockSize + allocated; // set blockSize in headers
+  memset(blockStart, 0, blockSize);
+  blockStart[(blockSize - HEADER_SIZE)/POINTER_SIZE] = blockStart[0] = blockSize + allocated; // set blockSize in headers
 }
 
-/// @brief Connect the chunk in two, prepare the following chunk and bind is to buddyList
+/// @brief Prepare the following chunk and bind it to buddyList
 /// @param chunk pointer to chunk to be connected
 /// @param exponent exponent of the newly created chunk
 /// @param size size of the newly created chunk
@@ -186,6 +188,7 @@ void connect(POINTER chunk, unsigned int exponent, uintptr_t size)
 void prepareBuddySystem()
 {
   uintptr_t buddyBlockSize = BLOCK_SIZE;
+  largestExp = 0;
   // find out how large block can fit in the allocable memory space
   while(buddyBlockSize < allocableMemorySize)
   {
@@ -205,14 +208,14 @@ void prepareBuddySystem()
   // put small left over blocks to their buddyLists
   while(leftOverMemory >= BLOCK_SIZE)
   {
-    buddyBlockSize /= 2; // decrease possible size of chunk
-    currentExp--;
     if(buddyBlockSize <= leftOverMemory) // if chunk fits the leftover memory, put it in buddyList
     {
       leftOverMemory -= buddyBlockSize; // use leftovermemory for the buddyBlock
       connect((POINTER)pointerToNewBlock, currentExp, buddyBlockSize); // connect the buddyBlock to its list
       pointerToNewBlock += buddyBlockSize; // move pointer behind the solved chunk
     }
+    buddyBlockSize /= 2; // decrease possible size of chunk
+    currentExp--;
   }
   allocableMemorySize -= leftOverMemory; // decrease by the space left unused (smaller than BLOCK_SIZE)
   return;
@@ -227,12 +230,12 @@ void unbind(unsigned int exponent, POINTER chunk)
   POINTER ptrNext = (POINTER) chunk[2];
   if(ptrNext != 0)
   {
-    ptrNext[1] = (ptrPrev ? ptrPrev[2] : 0); // change PREV_POINTER in the following chunk
+    ptrNext[1] = (uintptr_t)ptrPrev; // change PREV_POINTER in the following chunk
   }
   
   if(ptrPrev != 0)
   {
-    ptrPrev[2]= (ptrNext ? ptrNext[1] : 0); // change NEXT_POINTER in the previous chunk
+    ptrPrev[2]= (uintptr_t)ptrNext; // change NEXT_POINTER in the previous chunk
   }
 
   if(buddyList[exponent] == chunk)
@@ -241,76 +244,74 @@ void unbind(unsigned int exponent, POINTER chunk)
   }
 }
 
-/// @brief Prepare chunk - set allocation bit, set size and unbind from buddy list
-/// @param exponent class in the buddylists
-/// @param size minimal necessarry size for the chunk
-/// @param chunk pointer for the chunk
-bool allocate(unsigned int exponent, uintptr_t size, POINTER & chunk)
+/// @brief Merge chunks together -> look for free neighbours of the same size
+/// @param chunk pointer to the to-be-merged chunk
+/// @param exponent current exponenet of  the chunk
+/// @param size current size of the chunk
+void merge2(POINTER chunk, unsigned int exponent, uintptr_t size)
 {
-  chunk = buddyList[exponent];  // appoint pointer to the allocated chunk
-  if(!bitset.findInbitset((void*)chunk, false)) return false; // set allocated bit in bitset
-  prepareHeaders(chunk, size, 1); // prepare headers
-  unbind(exponent, chunk); // unbind from buddyList
-  return true;
-}
-
-/// @brief Looks at neighbours if they are free and merges blocks with the same size together or if both neighbours have half the size
-/// @param chunk pointer to block to be merged (unbinded)
-/// @param exponent current class of the block
-void merge(POINTER chunk, unsigned int exponent)
-{
-  uintptr_t size = chunk[0];
-  uintptr_t predecessorSize;
-  uintptr_t successorSize;
-  bool predecessorFree = ((uintptr_t)chunk > shiftedHeapStart && ((predecessorSize = chunk[-1]) & 1) == 0); // check if the previous block is free
-  bool successorFree = ((uintptr_t)chunk < (shiftedHeapStart + allocableMemorySize) && ((successorSize = chunk[size/POINTER_SIZE]) & 1) == 0); // check if the following chunk is free
-  if(predecessorFree && (size == predecessorSize)) // merge with predecessor
-  {
-    unbind(exponent, chunk = (&(chunk[predecessorSize/POINTER_SIZE]))); // disconnect from buddyList
-    connect(chunk, ++exponent, size*2); // connect whole chunk to buddyList
-    merge(chunk, exponent); // try merge again
+  uintptr_t predecessorSize = 0;
+  uintptr_t successorSize = 0;
+  bool predecessorFree = false;
+  bool successorFree = false;
+  while(exponent < largestExp)
+  { 
+    predecessorFree = (((uintptr_t)chunk > shiftedHeapStart) && ((uintptr_t)chunk <= (shiftedHeapStart + allocableMemorySize - size)) && ((predecessorSize = chunk[-1]) & 1) == 0); // check if the previous block is free
+    successorFree = (((uintptr_t)chunk < (shiftedHeapStart + allocableMemorySize - size)) && ((uintptr_t)chunk >= shiftedHeapStart) && ((successorSize = chunk[size/POINTER_SIZE]) & 1) == 0); // check if the following chunk is free
+    if(predecessorFree && (size == predecessorSize)) // merge with predecessor
+    {
+      unbind(exponent, chunk = (chunk - (predecessorSize/POINTER_SIZE))); // disconnect from buddyList
+    }
+    else if(successorFree && (size == successorSize)) // merge with successor
+    {
+      unbind(exponent, (chunk + (size/POINTER_SIZE)));
+    }
+    else if(successorFree && predecessorFree && (successorSize == predecessorSize) && (successorSize == size/2)) // predecessor and successor are half of chunk and free -> merge together
+    {
+      unbind(exponent-1, (chunk + (size/POINTER_SIZE)));
+      unbind(exponent-1, chunk = (chunk - (predecessorSize/POINTER_SIZE)));
+    }
+    else
+    {
+      // no free budies -> connect chunk
+      break;
+    }
+    // try merge again
+    size *= 2;
+    exponent++; 
   }
-  else if(successorFree && (size == successorSize)) // merge with successor
-  {
-    unbind(exponent, &(chunk[size/POINTER_SIZE]));
-    connect(&(chunk[size/POINTER_SIZE]), ++exponent, size*2);
-    merge(chunk, exponent);
-  }
-  else if(successorFree && predecessorFree && (successorSize == predecessorSize) && (successorSize == size/2)) // predecessor and successor are half of chunk and free -> merge together
-  {
-    unbind(exponent-1, chunk = (&(chunk[predecessorSize/POINTER_SIZE])));
-    unbind(exponent-1, &(chunk[size/POINTER_SIZE]));
-    connect(chunk, ++exponent, size*2);
-    merge(chunk, exponent);
-  }
-  else // connect the chunk to buddyList if there are no free budies
-  {
-    connect(chunk, exponent, size);
-  }
+  // connect the chunk to buddyList if there are no free budies
+  connect(chunk, exponent, size);
   return;
 }
 
-/// @brief Divided allocated block to needed memory and free space. Connect free memory chunks to buddyList
-/// @param chunk pointer to allocated memory
-/// @param neededExponent minimal necessary exponent for
-/// @param neededSize minimial necessary chunkSize
-/// @param allocatedExponent real allocated exponent
-void divide(POINTER chunk, unsigned int neededExponent, uintptr_t neededSize, unsigned int allocatedExponent)
+/// @brief Divide chunk to smaller chunks
+/// @param chunk pointer to allocated chunk
+/// @param neededExponent minimalRoundedExponent needed for the user
+/// @param allocatedExponent exponent of the allocated chunk
+/// @param allocatedSize size of the allocated chunk
+void divide2 (POINTER chunk, unsigned int neededExponent, unsigned int allocatedExponent, uintptr_t allocatedSize)
 {
-  POINTER newChunk = nullptr;
-  // divide allocated chunk into blocks and connect them to buddies
-  while(neededExponent < allocatedExponent)
-  {
-    newChunk = chunk + (neededSize/POINTER_SIZE);
-    connect(newChunk, neededExponent, neededSize);
-    neededExponent++;
-    neededSize *= 2;
-  }
-  // merge with neighbouring buddies
-  if(newChunk)
-  {
-    merge(newChunk, neededExponent-1);
-  }
+  if(neededExponent == allocatedExponent) return;
+  
+  divide2(chunk, neededExponent, --allocatedExponent, allocatedSize /= 2);
+  merge2(chunk + (allocatedSize/POINTER_SIZE), allocatedExponent, allocatedSize);
+}
+
+/// @brief Prepare chunk - set allocation bit, set size and unbind from buddy list
+/// @param minimalRoundedExponent class in the buddylists needed by user
+/// @param minimalRoundedSize minimal necessarry size for the chunk
+/// @param allocatedExponent class in the buddylists
+/// @param chunk pointer for the chunk
+bool allocate(POINTER & chunk, unsigned int minimalRoundedExponent, uintptr_t minimalRoundedSize, unsigned int allocatedExponent, uintptr_t allocatedSize)
+{
+  chunk = buddyList[allocatedExponent];  // appoint pointer to the allocated chunk
+  if(!bitset.findInbitset((void*)chunk, false)) return false; // set allocated bit in bitset
+  unbind(allocatedExponent, chunk); // unbind from buddyList
+  prepareHeaders(chunk, allocatedSize, 0); // prepare headers
+  divide2(chunk, minimalRoundedExponent, allocatedExponent, allocatedSize); // divide the block + merge the other block with buddies if possible
+  prepareHeaders(chunk, minimalRoundedSize, 1); // prepare headers
+  return true;
 }
 
 /// @brief Find exponent to given size
@@ -331,8 +332,6 @@ unsigned int findExponent(uintptr_t size)
 
 void   HeapInit    ( void * memPool, int memSize )
 {
-  /* todo */
-
   // save the given memory space
   heapStart = (uintptr_t) memPool;
   memorySize = (uintptr_t) memSize;
@@ -346,10 +345,9 @@ void   HeapInit    ( void * memPool, int memSize )
 }
 void * HeapAlloc   ( int    size )
 {
-  /* todo */
   POINTER resultPtr = NULL;
-  // fast check
-  if(size < 0 || (uintptr_t)size > allocableMemorySize) return NULL;
+  // fast check of requested size
+  if(size <= 0 || (uintptr_t)size > allocableMemorySize) return NULL;
   // calculate minimal size with the headers
   uintptr_t necessarySize = size + (2*HEADER_SIZE);
   uintptr_t roundedSize = BLOCK_SIZE;
@@ -369,8 +367,7 @@ void * HeapAlloc   ( int    size )
     // try to allocace ->  check if there are free chunks
     if(buddyList[newExp] != 0) 
     {
-      if(!allocate(newExp, roundedSize, resultPtr)) return NULL; // allocate block
-      divide(resultPtr, roundedExp, roundedSize, newExp); // divide the block + merge the other block with buddies if possible
+      if(!allocate(resultPtr, roundedExp, roundedSize, newExp, chunkSize)) return NULL; // allocate block
       return (void *)(resultPtr + (HEADER_SIZE/POINTER_SIZE)); // return pointer pointing behind the header
     }
   }
@@ -379,7 +376,6 @@ void * HeapAlloc   ( int    size )
 }
 bool   HeapFree    ( void * blk )
 {
-  /* todo */
   // check if the address is in the given memory space
   if((uintptr_t)blk < shiftedHeapStart || (uintptr_t)blk >= heapEnd) return false;
   // check if the address is aligned to BLOCK_SIZE
@@ -388,14 +384,13 @@ bool   HeapFree    ( void * blk )
   POINTER ptr = ((POINTER)blk) - HEADER_SIZE/POINTER_SIZE;
   if(!bitset.findInbitset((void*)ptr, true)) return false;
   // set headers
-  *ptr -= 1;
+  prepareHeaders(ptr, ptr[0]-1, 0);
   // try to merge block with neighbouring buddies to create larger block + put the block at the start of the buddy list
-  merge(ptr, findExponent(ptr[0]));
+  merge2(ptr, findExponent(ptr[0]), ptr[0]);
   return true;
 }
 void   HeapDone    ( int  * pendingBlk )
 {
-  /* todo */
   // go through bitset to find out how many blocks are still allocated
   bitset.bitsetDone(pendingBlk);
   // clean variables and memory
