@@ -271,7 +271,7 @@ end:
     if(keyOpened) std::fclose(keyFile);
     if(inOpened) std::fclose(inFile);
     if(outOpened) std::fclose(outFile);
-    if(!correct)    // delete the output file if an error occured
+    if(!correct && outOpened)    // delete the output file if an error occured
     {
         //printf("removing outFile\n");
         remove(outFileName);
