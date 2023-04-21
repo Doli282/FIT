@@ -29,32 +29,38 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
     const unsigned int READ_SIZE = BUFFER_SIZE;
     const size_t SIZE_OF_BLOCK = sizeof(unsigned char);
 
-    bool correct = true;
+    bool correct = true;    // flag of correctness
     
-    FILE * inFile;
-    FILE * outFile;
-    int read, written, cipherTextLength;
-    unsigned char OT[BUFFER_SIZE];
-    unsigned char ST[BUFFER_SIZE + BLOCK_SIZE];
+    FILE * inFile = nullptr;
+    FILE * outFile = nullptr;
+    int read = 0, written = 0, cipherTextLength = 0;
+    unsigned char OT[BUFFER_SIZE] = ""; // input buffer
+    unsigned char ST[BUFFER_SIZE + BLOCK_SIZE] = ""; // output buffer
 
+    // flags of opened files
     bool inOpened = false;
     bool outOpened = false;
     bool keyOpened = false;
     bool ekMalloced = false;
 
-    FILE * keyFile;
-    EVP_PKEY * keys;
-    EVP_CIPHER_CTX * ctx;
-    const EVP_CIPHER * cipherType;
-    int cipherNID;
+    FILE * keyFile = nullptr;
+    EVP_PKEY * keys = nullptr;
+    EVP_CIPHER_CTX * ctx = nullptr;
+    const EVP_CIPHER * cipherType = nullptr;
+    int cipherNID = 0;
 
-    int IVlen;
-    unsigned char IV[EVP_MAX_IV_LENGTH];
-    int ekl; // length of encrypted symmetric key
-    unsigned char * ek; // buffer for symmetric key -> I will use only one
+    int IVlen = 0;
+    unsigned char IV[EVP_MAX_IV_LENGTH] = "";
+    int ekl = 0; // length of encrypted symmetric key
+    unsigned char * ek = nullptr; // buffer for symmetric key -> I will use only one
 
-    //printf("Variables allocated\n");
-    
+    // check input arguments
+    if(!inFileName || !outFileName || !keyFileName || (!functionOpen && !symmetricCipher))
+    {
+        return false;
+    }
+
+
     // create new context
 	if(!(ctx = EVP_CIPHER_CTX_new()))
 	{
@@ -65,35 +71,29 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
         correct = false;
         goto end;
     }
-    //printf("Context created\n");
     
     // open files
     if(!(keyFile = fopen(keyFileName, "rb")))
 	{
-        //printf("could not open KEY '%s'\n", keyFileName);
 		correct = false;
         goto end;
 	}
     keyOpened = true;
 	if(!(inFile = fopen(inFileName, "rb")))
 	{
-        //printf("could not open IN '%s'\n", inFileName);
 		correct = false;
         goto end;
 	}
     inOpened= true;
 	if(!(outFile = fopen(outFileName, "wb")))
 	{
-        //printf("could not open OUT '%s'\n", outFileName);
 		correct = false;
         goto end;
 	}
     outOpened = true;
-    //printf("Files opened\n");
 
     if(functionOpen)
     { // for decryption
-        //printf("decrypting...\n");
         // prepare private key
         if(!(PEM_read_PrivateKey(keyFile, &keys, NULL, NULL)))
         {
@@ -101,17 +101,9 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
             goto end;
         }
 
-        // get cipher from the input file
-        if((fread(&cipherNID, 4, 1, inFile) != 1) ||
-            (fread(&ekl, 4, 1, inFile) != 1))
-        {
-            correct = false;
-            goto end;
-        }
-        ek = (unsigned char *) malloc(ekl*sizeof(*ek));
-        ekMalloced = true;
-
-        if(fread(ek, 1, ekl, inFile) != (size_t)ekl)
+        // get cipher and length of the encrypted symmetric key from the input file
+        if((fread(&cipherNID, 4, 1, inFile) != 1) || feof(inFile) || ferror(inFile) ||
+            (fread(&ekl, 4, 1, inFile) != 1) || feof(inFile) || ferror(inFile))
         {
             correct = false;
             goto end;
@@ -122,17 +114,39 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
             correct = false;
             goto end;
         }
+        // check if the key is long just right and allocate buffer for it
+        if(ekl <= 0 || ekl != EVP_PKEY_size(keys))
+        {
+            correct = false;
+            goto end;
+        }
+        ek = (unsigned char *) malloc(ekl*sizeof(*ek));
+        if(!ek)
+        {
+            correct = false;
+            goto end;
+        }
+        ekMalloced = true;
 
+        // read the key
+        if(fread(ek, 1, ekl, inFile) != (size_t)ekl || feof(inFile) || ferror(inFile))
+        {
+            correct = false;
+            goto end;
+        }
+
+        // get IV, if there is any
         IVlen = EVP_CIPHER_iv_length(cipherType);
         if(IVlen > 0)
         {
-            if(fread(IV, 1, IVlen, inFile) != (size_t)IVlen)
+            if(fread(IV, 1, IVlen, inFile) != (size_t)IVlen || feof(inFile) || ferror(inFile))
             {
                 correct = false;
                 goto end;
             }
         }
 
+        // start decryption
         if(!(EVP_OpenInit(ctx, cipherType, ek, ekl, IV, keys)))
         {
             correct = false;
@@ -142,55 +156,55 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
     }
     else
     { // for encryption
-        //printf("encrypting....\n");
         // get info about the symmetric cipher
         if(!(cipherType = EVP_get_cipherbyname(symmetricCipher)))
         {
-            //printf("could not get cipher by name (%s)\n", symmetricCipher);
             correct = false;
             goto end;
         }
         cipherNID = EVP_CIPHER_nid(cipherType);
-//        symCipherLen = EVP_CIPHER_key_length(cipherType);
         IVlen = EVP_CIPHER_iv_length(cipherType);
         
         // prepare public key
         if(!(PEM_read_PUBKEY(keyFile, &keys, NULL, NULL)))
         {
-            //printf("could not read PUBKEY\n");
             correct = false;
             goto end;
         }
+        // get the size of the encrypted symmetric key and allocate buffer for it
         if(!(ekl = EVP_PKEY_size(keys)))
         {
-            //printf("could not determine key size\n");
             correct = false;
             goto end;
         }
         ek = (unsigned char *) malloc(ekl*sizeof(*ek));
+        if(!ek)
+        {
+            correct = false;
+            goto end;
+        }
         ekMalloced = true;
- 
+
+        // start cryption
         if(!(EVP_SealInit(ctx, cipherType, &ek, &ekl, IV, &keys, 1)))
         {
-            //printf("could not initialize SEAL\n");
             correct = false;
             goto end;
         }
 
         // write header in the outFile
-        if((fwrite(&cipherNID, 4, 1, outFile) != 1) ||
-            (fwrite(&ekl, 4, 1, outFile) != 1) ||
-            (fwrite(ek, SIZE_OF_BLOCK, ekl, outFile) != (size_t)ekl))
+        if((fwrite(&cipherNID, 4, 1, outFile) != 1) || ferror(outFile) ||
+            (fwrite(&ekl, 4, 1, outFile) != 1) || ferror(outFile) ||
+            (fwrite(ek, SIZE_OF_BLOCK, ekl, outFile) != (size_t)ekl) || ferror(outFile))
         {
-            //printf("could not write header\n");
             correct = false;
             goto end;
         }
+        //wirte IVlen if it is used
         if(IVlen > 0)
         {
-            if(fwrite(IV, SIZE_OF_BLOCK, IVlen, outFile) != (size_t)IVlen)
+            if(fwrite(IV, SIZE_OF_BLOCK, IVlen, outFile) != (size_t)IVlen || ferror(outFile))
             {
-                //printf("could not write IV\n");
                 correct = false;
                 goto end;
             }
@@ -198,7 +212,6 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
     }
 
 
-    //printf("start translating files\n");
     // loop for reading the input file, en/decrypting and wirting to output file
 	while(true)
 	{
@@ -224,14 +237,14 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
 			goto end;
 		}
 		// write the block
-		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength || ferror(outFile))
 		{
 			correct = false;
 			goto end;
 		}
 	}
 
-    // cipher the last block
+    // cipher and write the last block
 	if(read != 0)
 	{
 		if(!EVP_CipherUpdate(ctx, ST, &cipherTextLength, OT, read))
@@ -239,8 +252,7 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
 			correct = false;
 			goto end;
 		}
-		// write the block
-		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+		if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength || ferror(outFile))
 		{
 			correct = false;
 			goto end;
@@ -254,17 +266,15 @@ bool crypt_data(const char * inFileName, const char * outFileName, const char * 
 		goto end;
 	}
 
-	// write the block
-	if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength)
+	// write the remainder
+	if((written = fwrite(ST, SIZE_OF_BLOCK, cipherTextLength, outFile)) != cipherTextLength || ferror(outFile))
 	{
 		correct = false;
 		goto end;
 	}
 
-    //printf("regular ");
 // cleanup
 end:
-    //printf("cleanup\n");
     EVP_CIPHER_CTX_free(ctx);
     EVP_PKEY_free(keys);
     if(ekMalloced) free(ek);
@@ -273,28 +283,20 @@ end:
     if(outOpened) std::fclose(outFile);
     if(!correct && outOpened)    // delete the output file if an error occured
     {
-        //printf("removing outFile\n");
         remove(outFileName);
     }
-    //printf("return %d\n", correct);
     return correct;
 }
 
 bool seal( const char * inFile, const char * outFile, const char * publicKeyFile, const char * symmetricCipher)
 {
-    //waiting for code...
-    //printf("---------SEAL------\n");
     return crypt_data(inFile, outFile, publicKeyFile, symmetricCipher, false);
-    //return true;
 }
 
 
 bool open( const char * inFile, const char * outFile, const char * privateKeyFile)
 {
-    //waiting for code...
-    //printf("---------OPEN-------\n");
     return crypt_data(inFile, outFile, privateKeyFile);
-    //return true;
 }
 
 
