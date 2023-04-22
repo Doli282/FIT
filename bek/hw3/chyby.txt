@@ -1,0 +1,86 @@
+--------- 4. ITERACE -------
+84> Nekontroluje se, co je na vstupu za soubor - obyèejný soubor, adresáø, nebo speciální soubor (/dev/null, /dev/random, ...) nebo symbolický link, ... (Zajímavé chování má obzvláš /dev/tty, kdy se pøesmwruje vstup a žádné výzvy pro uživatelský vstup se nevypíšou.)
+Také se nekontroluje, zda vstupní soubor existuje, zda se (ne)povedl otevøít, zda se do nìj podaøilo zapsat, zda nenastala chyba nebo se celý soubor už nepøeèetl (EOF). To souvisí s nekontrolováním návratových hodnot.
+99> unsigned short má 2 byty a vejde se do nìj maximálnì èíslo 65535. Jakékoli vìtší èíslo se uloží modulo 65536. Do bufferu charù o 15 znacích se sice vejde až èíslo 999 999 999 999 999, po konverzi do sMagic se znìj stane pouhých 32767.
+
+aktuální stav: 9x Bonus, 19x normální chyba, 1x doplnit bonus (+chyba v rekurzi) (+chyba v práci se soubory)
+--------- 3. ITERACE -------
+Doplnìní z minula:
+NE: 37> Kdyz v retezci nebude \0, tak se funkce nezastavi
+ANO: 47> Šifrovací funkce invertuje cisla a pismena. Je symetrická a není tìžké ji rozluštit - je náchylná na chosen-plaintext attack (což je v podstatì zadaný vstup uživatele a uložený soubor).
+STEJNE: 47> Funkce také pøepisuje vstupní øetìzec, na což by bylo dobré budoucí vývojáøe upozornit, to ale argument char * splòuje.
+ANO-B: 53> Dochází k implicitní konverzi z char na int na pravé stranì pøiøazení, a poté ke zpìtné konverzi na char. Tato zptìná konerze je narrowing konverze, která není pøesnì zadefinována, respektive je implementation-defined.
+ANO: 142> Chyba v zápisu sMagic místo szMagic spoèívá v tom, že prvnì vypoèítané magické èíslo se uloží nezašifrované, ale pøi pozìejším otevøení uloženého souboru se dešifruje, a tím se zmìní.
+ANO-B (DOPLNIT): 140> Velikost datových typù není pøesnì definovaná a pro architektury, které mají širší int než 16 bytù, tak mùže dojít k bufferoverflow
+
+
+Nové potenciální chyby:
+
+ANO-B: #4> Zdrojový kód je psán jako C, ale má pøíponu cpp, tedy bude kompilován jako C++. To není problém, jazyky jsou kompatibilní. Nicménì, když se program kompiluje jako C++, mìly by se používat C++ vlastní knihovny C++ -> tedy headery <cstdio>, <cstring>, <cstdlib>. C knihovny jsou pro C++ "deprecated".
+NE: +14>  Je otázka, jestli se pøi vypisování nápovìdy, jak se má program správnì použít, má vracet návratová hodnota SUCCESS a ne jiná hodnota signalizující, že program sice dobìhl bez chyb, ale nebyl použit správnì.
+ANO-B: #73> Do pointeru je pøiøazován NULL. NULL je preporocesorové makro jazyka C, které se implicitnì konvertuje na pointer, ale také na integer datové typy. C++ nullptr se konvertuje na pointer, ale už ne na jiné datové typy. Výmìnou NULL za nullptr je možné pøedejít nežádoucím konverzím a run-time errorùm.
+DOPLNIT-B: #99> Ukládám až 15 bytù (+ukonèovací nullbyte) z 'szMagic' do 'sMagic', který mùže mít pouhé 2 byty (skuteèná velikost integeru závisí na architektuøe). Dochází tedy ke ztrátì informace. 
+ANO: #125> snprintf a _snprintf se tváøí jako stejné funkce, ale liší se. Ve chvíli, kdy je vstup vìtší než buffer, se funkce zachovají odlišnì. Návratovou hodnotou snprintf() bude poèet znakù, který je na vstupu, zatímco návratovou hodnotou _snprintf() bude záporné èíslo. Také jinak pracují s umisováním ukonèovacíhon nullbyte:
+The snprintf function and the _snprintf family of functions format and store count or fewer characters in buffer. The snprintf function always stores a terminating null character, truncating the output if necessary. The _snprintf family of functions only appends a terminating null character if the formatted string length is strictly less than count characters.
+z Microsoft dokumentace: https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l?view=msvc-170
+ANO-B: jiná pøiložená binárka
+
++78: Problém se speciálními soubory na vstupu (/dev/null) + neosetruji se symlinky
+
+
+Aktuální stav: 4x Bonus, 16x normální chyba, 2x doplnit bonus, 2-3x doplnit chybu
+--------- 2. ITERACE -------
+DOPLNIT-B: #22+40> Opakovane zanorovani by mohlo vest k vycerpani kapacity zasobniku.
+ANO: #39+40+41+21> Funkce pocita s tim, ze v 'c' je cislice, nikde, ale nekontroluje, ze tomu tak skutecne je. Pokud dostane znak mensi nez '0'. Char bude zaporny a pri rozsirovani na int se z nej stane velke zaporne cislo. To pak bude mit negativni dopad na funkci CalcMagicNumber, ktera predpoklada, ze dostane cisla prirozena, a ktera pouze vrati toto zaporne cislo (jako nHi + (nLo=0)).
+DOPLNIT??: +47> Funkce sifruje pouze pismena a cislice. Jine znaky zustanou zachovany a nezasifruji se. Pokud toto nebyl zamer v navrhu funkce.
+STEJNE#49> Funkce nekontroluje, ze nedostala nullptr a v pripade, ze nenarazi na '\0' bude navic pristupovat a zapisovat i mimo alokovanou pamet.
++ANO-B: #88> Nekontroluje se obsah souboru, tj. pri vetsi delce vstupu se muze vstup urcen pro jeden buffer dostat i do dalsich, a predevsim muze dojit k precteni celeho souboru, a ve zbylych bufferech tak zbyde puvodni neprepsany obsah, ktery nebude obsahovat '\0', coz povede k chybnemu chovani v dalsich prikazech.
++ANO: #101> V teto vetvi if-else nedochazi k zavreni souboru pomoci fclose().
+NE: #125> snprintf() nacte obsah argumentu, vzdy ale jen omezeny pocet bytu a vzdy je ukonci '\0'. Timto je mozne nacist i neinicializovane buffery. V tomto konkretnim pripade nacteme nahodny obsah pameti, pokud nebyl soubor dostatecne dlouhy, aby se do vsech bufferu neco vlozilo. V obecnem pripade bychom mohli precist pamet, ve ktere mohly byt drive ulozeny jine promenne.
+ANO: #135> Nekontroluje se, zda se povedlo soubor skutecne otevrit.
+DOPLNIT-B: #140> sprintf() nekontroluje pocet zapisovanych znaku a potencialne (pro long int) muze dojit k bufferoverflow.
+DOPLNIT: #142> Do souboru se zapisuje nezasifrovana hodnota sMagic. Dle predchozich radku (140, 141) se ale zrejme melo jednat o szMagic.
+STEJNE: #143> Ve chvili, kdy se nepovede soubor otevrit, zpusobi fclose(pf) segfault, protoze pf = NULL.
+
+ANO: Kontrola navratovych hodnot:
+fgets() - navratova hodnota nam povi, jestli se cteni povedlo - dostaneme pointer na C-string, jinak NULL. Dale bychom mohli kontrolovat feof() nebo ferror() na stav streamu. V pripade chyby muze a nemusi byt zmenen obsah bufferu, tj. nemusi byt ani ukoncen '\0'.
+scanf() / sscanf() - navratova hodnota vraci pocet spravne prectenych argumentu nebo zapornou hodnotu pri EOF. Z navratove hodnoty pozname, jestli je ve vsech argumentech validni obsah a jestli nejsme uz na konci vstupu.
+fprintf() - navratova hodnota nam vrati pocet zapsanych znaku. Overime dle ni, ze se povedlo do souboru v poradku zapsat, a ze se mezitim soubor nezavrel, ze nam ho treba nekdo pod rukama nevymazal, ... Pokud se zapis nepovedl, muzeme na to dale reagovat.
+fopen() - dle navratove hodnoty overime, ze se skutecne povedlo soubor otevrit a muzeme s nim pracovat.
+
+NE: printf("\nYou were born on %s-%s-%s\n", szYear, szMonth, szDay);
+
+
+--------- 1. ITERACE -------
+ANO: + 35> Funkce by si mela kontrolovat, ze nedostala nullptr
+NE: + 40> Dochazi ke konverzi char na int - mohla by byt explicitni
+NE: + 58> Pro lepsi prehlednost by bylo dobre vyraz uzavorkovat, nebo rovnou rozdelit na dva. Nemusi byt na prvni pohled jasne, zda se ma inkrementovat hodnota nebo pointer
+NE: # 62> nevyuzita promena argc
++ANO: # 70> nepouzita promena szBuffer
++ANO: # 78> pred pristupem k argv[1] by se nejdrive mel kontrolovat skutecny pocet parametru v argv[] - at uz jich je mene nebo vice nez 1
+ANO-B: + 78> Pokud by byl spatny pocet argumentu (argc != 1), bylo by dobre vypsat hlasku, jak se ma program pouzivat (usage)
+ANO-B: # 84> fopen(,"rt") - 't' modifier je specificky pro Windows a jeho chovani je tak na jinych platformach nedefinovano - minimalne z refernce to takto vyplyva
+NE: # 85+107> muze byt neprehledne, ze se jeden vstup jednou interpretuje jako nazev souboru a podruhe jako jmeno uzivatele
+- napr. pokud budu mit sdileny PC a prijdou po sobe dva uzivatele se stejnym jmenem, musi se nejprve vymazat predchozi zaznam (pokud je vubec vhodne na sdilenem PC ukladat osobni udaje jako datumy narozeni, byt sifrovane)
+- pri dalsim rozsirovani aplikace muze byt neprehledne dvojite pouziti argumentu
+VYSVETLIT-ANO: # 88> fgets() chybi kontrola navratove hodnoty funkce, jestli se cteni povedlo nebo nepovedlo, pripadne, jestli nenarazila na eof, nebo se nevyskytla jina chyba
+NE: # 90> I u printf() je mozno kontrolovat navratovou hodnotu pro ujisteni, ze vystup funguje
++ANO: # 90> Takoveto pouziti printf lze exploitovat. Spravne je vystup formatovat pomoci "%s" 
++ANO: # 91> 'sizeof(szName)' ma byt 'sizeof(szDay)', aby pocet znaku odpovidal delce bufferu
++ANO: # 99> sscanf() nacita signed short int (%hd), zatimco promena v argumentu je unsigned short int (%hu) 
+ZKUSIT ZNOVU-NE: + 100> tisknuti nove radky jako prvni znak je netradicni (leda ze bych chtel vic prazdnych radek) - odradkovani by melo byt na konci predchoziho vystupu
++ANO: # 100?> funkce gets() ulozi do bufferu take '\n', ktery se v encrypt() nezmeni a nakonec se vytiskne v printf(), coz ale vzhledem k formatu vystupu nebylo zamerem
+ANO: # 113> Zadavane vstupy se nikde nekontroluji - jestli datumy obsahuji cisla, zda to jsou validni datumy, zda vstupy neobsahuji specialni symboly
+VYSVETLIT-ANO: # 116> nekontroluje se vystup funkce scanf()
++ANO: # 116> Bylo by dobre udat maximalni pocet znaku (%16s), ktere se maji precist - jinak muze vest k buffer overflow
+ZDE NE: + 118> Windows compilator doporucuje pouzit scanf_s(), protoze vice hlida delku vstupu (obdobne u sscanf(), fopen(), sprintf() a snprintf())
+--> NEKDE JE TU CHYBA: # 125> velikost szComb je mensi nez velikosti sjednocovanych bufferu - muzeme prijit o prebyvajci znaky
+ANO-B: # 130> Navratovou hodnotou CalcMagicStr() je signed int, zatimco sMagic je unsigned short int
+VYSVETLIT-ANO: # 142> U zapisovani do souboru by se melo kontrolovat, ze se zapis povedl
+STEJNA: # 146> dochazi ke knoverzi z unsigned short na int -> v printf() ma byt modifier %hu
+
+
+? 47> Budouci vyvojare by bylo dobre upozornit, ze funkce prepisuje vstupni string
+NE: 47> Funkce sifruje pouze pismena a cislice, jine znaky zustanou zachovany (a pouzita sifra neni prilis silna)
+
+NE: je mozne ze obdrzena binarka neodpovida zdrojovemu kodu ?
