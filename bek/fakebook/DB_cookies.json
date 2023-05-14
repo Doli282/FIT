@@ -1,0 +1,15 @@
+[
+{"type":"header","version":"5.2.0","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"bekeuwebcz9861"},
+{"type":"table","name":"cookies","database":"bekeuwebcz9861","data":
+[
+{"id":"2","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889user_id=38; cored889user_hash=df520cff6e5b2b26b381c773c21e9a160c0db1a0a6a79fc8cc; cored889last_login=1684005454"},
+{"id":"3","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889last_login=1684007419; cored889user_id=38; cored889user_hash=9dd49c4fe7fc6e21f03e378b097188c050588d971f3542b4f6"},
+{"id":"4","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889user_id=38; cored889user_hash=9dd49c4fe7fc6e21f03e378b097188c050588d971f3542b4f6; cored889last_login=1684008321"},
+{"id":"5","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889user_id=38; cored889user_hash=9dd49c4fe7fc6e21f03e378b097188c050588d971f3542b4f6; cored889last_login=1684009325"},
+{"id":"6","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889user_id=38; cored889user_hash=9dd49c4fe7fc6e21f03e378b097188c050588d971f3542b4f6; cored889last_login=1684011167"},
+{"id":"7","user_id":"38","username":"Frodo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889user_id=38; cored889user_hash=9dd49c4fe7fc6e21f03e378b097188c050588d971f3542b4f6; cored889last_login=1684013068"},
+{"id":"8","user_id":"41","username":"Bilbo","cookie":"PHPSESSID=h0hr5d622dffrhhc8i6chmks0a; cored889visit=1683975614; cored889last_login=1684013068; cored889user_id=41; cored889user_hash=08b7ac63a600b4a99b05bb97f4e597b4016b2559e1d089c7ac"}
+]
+}
+]
