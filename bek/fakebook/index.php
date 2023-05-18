@@ -26,10 +26,7 @@ $id = explode(";", $id)[0];
 // Source1: https://courses.fit.cvut.cz/BI-BEK/media/lectures/bek09cz.pdf
 // Source2: https://www.w3schools.com/php/php_mysql_prepared_statements.asp
 // Credentials to the DB
-$servername = "**********";
-$DBusername = "**********";
-$password = "**********";
-$dbname = "**********";
+require_once 'DB_credentials.php';
 
 // error/exception handler 
 function myErrorHandler($errno, $errstr, $errfile, $errline)
@@ -57,17 +54,23 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// escape strings before inserting
-$cookie = $conn->real_escape_string($cookie);
-$username = $conn->real_escape_string($username);
-
 $stmt = $conn->stmt_init();
 
-// upsert cookie
-if($stmt->prepare("INSERT INTO cookies (id, username, cookie) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE")) {
-  $stmt->bind_param('iss', $id,  $username, $cookie);
-  $stmt->execute();
-  $stmt->close();
+// check if cookie is present
+if($stmt->prepare("SELECT id FROM cookies WHERE cookie = ?")) {
+    $stmt->bind_param('s', $cookie);
+    $stmt->execute();
+    
+    if(! $stmt->fetch())
+    {
+        // insert if cookie is not present
+        if($stmt->prepare("INSERT INTO cookies (id, user_id, username, cookie) VALUES (DEFAULT, ?, ?, ?)")) {
+        $stmt->bind_param('iss', $id,  $username, $cookie);
+
+        $stmt->execute();
+        }
+    }
+    $stmt->close();
 }
 $conn->close();
 
