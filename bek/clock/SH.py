@@ -3,6 +3,7 @@ from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
 from urllib.parse import urlparse
+import os.path
 
 # os.path
 # urlib.parse
@@ -12,8 +13,32 @@ from urllib.parse import urlparse
 # subprocess
 
 # Read port number from config file
-def get_port():
-    return 8080
+def get_port() -> int:
+    
+    # Prepare path to the config file
+    path = os.path.abspath(os.path.expanduser("~/.config/SH.config"))
+    
+    # Try to open the configuration file
+    try:
+        file = open(path, "rt")
+    except OSError:
+        print("Configuration file '" + path + "' cannot be open")
+        exit(2)
+
+    # Try to read the saved port number
+    try:
+        port = file.read()
+        if(int(port) < 0 or int(port) > 65535):
+            raise ValueError
+    except (TypeError, ValueError, OSError):
+        file.close()
+        print("Invalid configuration - check " + path)
+        print("Aborting")
+        exit(2)
+
+    # By success return the port number
+    file.close()
+    return int(port)
 
 # Class of HTTP server
 class HTTP_handler(BaseHTTPRequestHandler):
@@ -102,7 +127,9 @@ def local_machine():
 
 # Global Main function
 def main():
+
     # Set server environment
+    print("Reading configuration...")
     host_name = "localhost"
     server_port = get_port()
 
@@ -129,3 +156,4 @@ def main():
 # Run the main function
 if __name__ == '__main__':
     main()
+    exit(0)
