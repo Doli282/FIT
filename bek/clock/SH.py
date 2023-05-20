@@ -4,6 +4,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
 from urllib.parse import urlparse
 import os.path
+import subprocess
 
 # os.path
 # urlib.parse
@@ -12,18 +13,19 @@ import os.path
 # pyprctl
 # subprocess
 
+# ================ SERVER (START) ==============================
 # Read port number from config file
 def get_port() -> int:
     
     # Prepare path to the config file
-    path = os.path.abspath(os.path.expanduser("~/.config/SH.config"))
+    path = os.path.abspath(os.path.expanduser("~/.config/SH/SH.config"))
     
     # Try to open the configuration file
     try:
         file = open(path, "rt")
     except OSError:
         print("Configuration file '" + path + "' cannot be open")
-        exit(2)
+        exit(1)
 
     # Try to read the saved port number
     try:
@@ -34,7 +36,7 @@ def get_port() -> int:
         file.close()
         print("Invalid configuration - check " + path)
         print("Aborting")
-        exit(2)
+        exit(1)
 
     # By success return the port number
     file.close()
@@ -59,11 +61,17 @@ class HTTP_handler(BaseHTTPRequestHandler):
         self.wfile.write(bytes("<p>Returned string: <p>", "utf-8"))
 
         # Send time in requested format
-        self.wfile.write(bytes(str(datetime.now().strftime(urlparse(self.path).query)), "utf-8"))
-
+        try:
+            self.wfile.write(bytes(str(datetime.now().strftime(urlparse(self.path).query)), "utf-8"))
+        except:
+            self.wfile.write(bytes("<p> Some problem with conversion occured </p>", "utf-8"))
+    
+    # Do not write messages
     def log_message(self, format: str, *args) -> None:
         pass
+# ================ SERVER (END) ================================
 
+# ============== LOCAL USER (START) ============================
 # Print help how to use the program
 def print_help():
     print("---- Help ----")
@@ -76,19 +84,27 @@ def print_help():
 
 # Set time - get paramters and call admin process
 def set_time():
-    format_string = '%d.%m.%Y %H:%M:%S'
+    format_string = "%d.%m.%Y %H:%M:%S"
     user_input = input("Set time in format: " + format_string + " (e.g. 01.01.2000 00:00:00) or 'return' to return\n>")
-    print(user_input)
+
+    # Give a chance to return
     if(user_input == 'return'):
         return
+    
+    # Convert time to unix timestamp
     try:
         dt = datetime.strptime(user_input, str(format_string))
         timestamp = int(dt.timestamp())
-    except:
+    except (OverflowError, ValueError, UnicodeError):
         print("Could not parse time")
         return
-    print(timestamp)
-    ###### Start Admin Process
+
+    # Start SUID process to change system time
+    try:
+        subprocess.run(["/usr/bin/NC", str(timestamp)], check=True)
+        print("Time changed successfully")
+    except (OSError, subprocess.SubprocessError):
+        print("Error while setting time.")
 
 
 # Main function for local machine
@@ -103,7 +119,7 @@ def local_machine():
         try:
             user_input = input("Enter string to get time:\n>")
         except:
-            # EOF found
+            # EOF found / end of input (ctrl+D)
             print("Input ended")
             return
 
@@ -122,12 +138,30 @@ def local_machine():
 
         # Print current time in given format
         else:
-            print(str(datetime.now().strftime(user_input)))
+            try:
+                print(str(datetime.now().strftime(user_input)))
+            except:
+                print("Unable to convert string")
+# ============== LOCAL USER (END) ==============================
 
+# ============ CAPABILITIES (START) ============================
+# Drop unnecessary capabilities, set needed capabilites
+def set_capabilites():
+    pass
 
+# ============== CAPABILITIES (END) ============================
+
+# ================= MAIN (START) ===============================
 # Global Main function
 def main():
 
+    # Drop all capabilites
+    try:
+        set_capabilites()
+    except OSError:
+        print("Unable to drop cabalities. Exiting for security reasons.")
+        exit(2)
+    
     # Set server environment
     print("Reading configuration...")
     host_name = "localhost"
@@ -157,3 +191,4 @@ def main():
 if __name__ == '__main__':
     main()
     exit(0)
+# ================== MAIN (END) ================================
