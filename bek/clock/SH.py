@@ -5,13 +5,7 @@ from threading import Thread
 from urllib.parse import urlparse
 import os.path
 import subprocess
-
-# os.path
-# urlib.parse
-# threading
-# signal
-# pyprctl
-# subprocess
+import prctl
 
 # ================ SERVER (START) ==============================
 # Read port number from config file
@@ -23,20 +17,19 @@ def get_port() -> int:
     # Try to open the configuration file
     try:
         file = open(path, "rt")
-    except OSError:
+    except:
         print("Configuration file '" + path + "' cannot be open")
-        exit(1)
+        raise AssertionError
 
     # Try to read the saved port number
     try:
         port = file.read()
         if(int(port) < 0 or int(port) > 65535):
             raise ValueError
-    except (TypeError, ValueError, OSError):
+    except:
         file.close()
         print("Invalid configuration - check " + path)
-        print("Aborting")
-        exit(1)
+        raise AssertionError
 
     # By success return the port number
     file.close()
@@ -57,7 +50,7 @@ class HTTP_handler(BaseHTTPRequestHandler):
         # Send HTML page
         self.wfile.write(bytes("<h1>Network Clock</h1>", "utf-8"))
         self.wfile.write(bytes("<p>This application returns current time.</p>", "utf-8"))
-        self.wfile.write(bytes("<p>Please put your input to url parameter.</p>", "utf-8"))
+        self.wfile.write(bytes("<p>Please put your input as url parameter.</p>", "utf-8"))
         self.wfile.write(bytes("<p>Returned string: <p>", "utf-8"))
 
         # Send time in requested format
@@ -84,9 +77,14 @@ def print_help():
 
 # Set time - get paramters and call admin process
 def set_time():
+    # Get format new time from user
     format_string = "%d.%m.%Y %H:%M:%S"
-    user_input = input("Set time in format: " + format_string + " (e.g. 01.01.2000 00:00:00) or 'return' to return\n>")
-
+    try:
+        user_input = input("Set time in format: " + format_string + " (e.g. 01.01.2000 00:00:00) or 'return' to return\n>")
+    except:
+        print("Input interrupted")
+        return
+    
     # Give a chance to return
     if(user_input == 'return'):
         return
@@ -95,7 +93,7 @@ def set_time():
     try:
         dt = datetime.strptime(user_input, str(format_string))
         timestamp = int(dt.timestamp())
-    except (OverflowError, ValueError, UnicodeError):
+    except:
         print("Could not parse time")
         return
 
@@ -103,8 +101,9 @@ def set_time():
     try:
         subprocess.run(["/usr/bin/NC", str(timestamp)], check=True)
         print("Time changed successfully")
-    except (OSError, subprocess.SubprocessError):
+    except:
         print("Error while setting time.")
+        return
 
 
 # Main function for local machine
@@ -147,44 +146,52 @@ def local_machine():
 # ============ CAPABILITIES (START) ============================
 # Drop unnecessary capabilities, set needed capabilites
 def set_capabilites():
-    pass
-
+    # Drop all capabilites except ... nothing
+    prctl.cap_effective.limit()
+    prctl.cap_inheritable.limit()
+    prctl.cap_permitted.limit()
 # ============== CAPABILITIES (END) ============================
 
 # ================= MAIN (START) ===============================
 # Global Main function
 def main():
 
-    # Drop all capabilites
+    # Set capabilites
     try:
         set_capabilites()
-    except OSError:
-        print("Unable to drop cabalities. Exiting for security reasons.")
-        exit(2)
+    except:
+        print("Unable to set capabilities. Hopefully, they are set correctly...")
     
-    # Set server environment
-    print("Reading configuration...")
-    host_name = "localhost"
-    server_port = get_port()
+    local_ran = False # Flag if local machine was launched
+    try:
+        # Set server environment
+        print("Reading configuration...")
+        host_name = ""
+        server_port = get_port()
 
-    # Prepare server
-    print("Preparing server")
-    web_server = ThreadingHTTPServer((host_name, server_port), HTTP_handler)
+        # Prepare server
+        print("Preparing server")
+        web_server = ThreadingHTTPServer((host_name, server_port), HTTP_handler)
 
-    # Run server until kill signal comes
-    print("Launching server")
-    server_thread = Thread(target=web_server.serve_forever, daemon=True)
-    server_thread.start()
-    print("--------------")
-    
-    # Serve local requests
-    local_machine()
+        # Run server until kill signal comes
+        print("Launching server")
+        server_thread = Thread(target=web_server.serve_forever, daemon=True)
+        server_thread.start()
+        print("--------------")
+        
+        # Serve local requests
+        local_ran = True
+        local_machine()
 
-    # Close server
-    print("--------------")
-    print("Ending server...")
-    web_server.server_close()
-    print("Server stopped")
+        # Close server
+        print("--------------")
+        print("Ending server...")
+        web_server.server_close()
+        print("Server stopped")
+    except:
+        if(not(local_ran)):
+            print("Problem with server - continuing only locally")
+            local_machine()
     print("See you")
 
 # Run the main function

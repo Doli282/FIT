@@ -5,8 +5,6 @@
 #include <sys/capability.h>
 #include <sys/types.h>
 
-#include <stdio.h>
-
 /*  except - array of capabilites to preserve   */
 /*  n - except array length */
 /*  drops ALL capabilites from CAP_INHERITABLE  */
