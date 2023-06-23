@@ -1,0 +1,75 @@
+22/6/2023 -- 16:57:20 - <Notice> - This is Suricata version 6.0.10 RELEASE running in USER mode
+22/6/2023 -- 16:57:20 - <Info> - CPUs/cores online: 4
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_CONF_YAML_ERROR(242)] - App-Layer protocol sip enable status not set, so enabling by default. This behavior will change in Suricata 7, so please update your config. See ticket #4744 for more details.
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_CONF_YAML_ERROR(242)] - App-Layer protocol mqtt enable status not set, so enabling by default. This behavior will change in Suricata 7, so please update your config. See ticket #4744 for more details.
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_CONF_YAML_ERROR(242)] - App-Layer protocol rdp enable status not set, so enabling by default. This behavior will change in Suricata 7, so please update your config. See ticket #4744 for more details.
+22/6/2023 -- 16:57:20 - <Info> - fast output device (regular) initialized: fast.log
+22/6/2023 -- 16:57:20 - <Info> - eve-log output device (regular) initialized: eve.json
+22/6/2023 -- 16:57:20 - <Info> - stats output device (regular) initialized: stats.log
+22/6/2023 -- 16:57:20 - <Info> - Hash hash table size 2097344 bytes
+22/6/2023 -- 16:57:20 - <Info> - 1 rule files processed. 18 rules successfully loaded, 0 rules failed
+22/6/2023 -- 16:57:20 - <Info> - Threshold config parsed: 0 rule(s) found
+22/6/2023 -- 16:57:20 - <Info> - 22 signatures processed. 8 are IP-only rules, 0 are inspecting packet payload, 11 inspect application layer, 0 are decoder event only
+22/6/2023 -- 16:57:20 - <Info> - Argument /home/kali/wireshark-tutorial-Emotet-traffic/ was a directory
+22/6/2023 -- 16:57:20 - <Notice> - all 5 packet processing threads, 4 management threads initialized, engine started.
+22/6/2023 -- 16:57:20 - <Info> - Starting directory run for /home/kali/wireshark-tutorial-Emotet-traffic/
+22/6/2023 -- 16:57:20 - <Info> - Processing pcaps directory /home/kali/wireshark-tutorial-Emotet-traffic/, files must be newer than 0 and older than 18446744073709550616
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//suricata.rules" at 1687467340453
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//suricata.log" at 1687466958604
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//sha256-blacklist" at 1687426214650
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//mail_2.eml" at 1687384145179
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//suricata.yaml" at 1687380484003
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//Example-3-2021-01-05-Emotet-with-spambot-traffic-part-2.pcap" at 1610399723000
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//README.md" at 1687379642342
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//Example-1-2021-01-06-Emotet-infection.pcap" at 1610148051000
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//mail_3.eml" at 1687384145179
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//suricata2.rules" at 1687461622667
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//mail_1.eml" at 1687384145179
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//Example-4-2021-01-05-Emotet-infection-with-Trickbot.pcap" at 1610069442000
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//emotet_malware" at 1687382651394
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//mail_4.eml" at 1687384145179
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//mail_5.eml" at 1687384145179
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//Example-5-2020-08-18-Emotet-infection-with-Qakbot.pcap" at 1608079134000
+22/6/2023 -- 16:57:20 - <Info> - Found "/home/kali/wireshark-tutorial-Emotet-traffic//Example-2-2021-01-05-Emotet-with-spambot-traffic-part-1.pcap" at 1610146800000
+22/6/2023 -- 16:57:20 - <Info> - No packets with invalid checksum, assuming checksum offloading is NOT used
+22/6/2023 -- 16:57:20 - <Info> - pcap file /home/kali/wireshark-tutorial-Emotet-traffic//Example-5-2020-08-18-Emotet-infection-with-Qakbot.pcap end of file reached (pcap err code 0)
+22/6/2023 -- 16:57:20 - <Info> - Processed file /home/kali/wireshark-tutorial-Emotet-traffic//Example-5-2020-08-18-Emotet-infection-with-Qakbot.pcap, processed up to 1608079134000
+22/6/2023 -- 16:57:20 - <Info> - pcap file /home/kali/wireshark-tutorial-Emotet-traffic//Example-4-2021-01-05-Emotet-infection-with-Trickbot.pcap end of file reached (pcap err code 0)
+22/6/2023 -- 16:57:20 - <Info> - Processed file /home/kali/wireshark-tutorial-Emotet-traffic//Example-4-2021-01-05-Emotet-infection-with-Trickbot.pcap, processed up to 1610069442000
+22/6/2023 -- 16:57:20 - <Info> - pcap file /home/kali/wireshark-tutorial-Emotet-traffic//Example-2-2021-01-05-Emotet-with-spambot-traffic-part-1.pcap end of file reached (pcap err code 0)
+22/6/2023 -- 16:57:20 - <Info> - Processed file /home/kali/wireshark-tutorial-Emotet-traffic//Example-2-2021-01-05-Emotet-with-spambot-traffic-part-1.pcap, processed up to 1610146800000
+22/6/2023 -- 16:57:20 - <Info> - pcap file /home/kali/wireshark-tutorial-Emotet-traffic//Example-1-2021-01-06-Emotet-infection.pcap end of file reached (pcap err code 0)
+22/6/2023 -- 16:57:20 - <Info> - Processed file /home/kali/wireshark-tutorial-Emotet-traffic//Example-1-2021-01-06-Emotet-infection.pcap, processed up to 1610148051000
+22/6/2023 -- 16:57:20 - <Info> - pcap file /home/kali/wireshark-tutorial-Emotet-traffic//Example-3-2021-01-05-Emotet-with-spambot-traffic-part-2.pcap end of file reached (pcap err code 0)
+22/6/2023 -- 16:57:20 - <Info> - Processed file /home/kali/wireshark-tutorial-Emotet-traffic//Example-3-2021-01-05-Emotet-with-spambot-traffic-part-2.pcap, processed up to 1610399723000
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//README.md, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//suricata.yaml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//emotet_malware, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//mail_2.eml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//mail_3.eml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//mail_1.eml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//mail_4.eml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//mail_5.eml, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//sha256-blacklist, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//suricata2.rules, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//suricata.log, skipping
+22/6/2023 -- 16:57:20 - <Error> - [ERRCODE: SC_ERR_FOPEN(44)] - unknown file format
+22/6/2023 -- 16:57:20 - <Warning> - [ERRCODE: SC_ERR_PCAP_DISPATCH(20)] - Failed to init pcap file /home/kali/wireshark-tutorial-Emotet-traffic//suricata.rules, skipping
+22/6/2023 -- 16:57:20 - <Info> - Updating processed to 1610399723000
+22/6/2023 -- 16:57:20 - <Info> - Directory run mode complete
+22/6/2023 -- 16:57:20 - <Notice> - Signal Received.  Stopping engine.
+22/6/2023 -- 16:57:20 - <Info> - time elapsed 0.395s
+22/6/2023 -- 16:57:20 - <Notice> - Pcap-file module read 5 files, 86735 packets, 62436774 bytes
+22/6/2023 -- 16:57:20 - <Info> - Alerts: 387
+22/6/2023 -- 16:57:20 - <Info> - cleaning up signature grouping structure... complete
