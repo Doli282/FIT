@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.hostname = "monloop"
+  config.vm.box = "generic/alpine312" # Kernel 5.4
+
+  config.vm.box_check_update = false
+  config.vm.provider :libvirt do |v|
+    v.memory = 1024
+    v.cpus = 1
+  end
+
+  config.vm.provision "shell", path: "scripts/provision.sh"
+  config.vm.synced_folder ".", "/vagrant", type: "rsync"
+end
+

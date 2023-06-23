@@ -1,0 +1,4 @@
+EXTRA_CFLAGS=@module_includes_string@
+
+obj-m := monloop.o
+monloop-objs := $(patsubst %.c,%.o, $(filter %.c, @module_sources_string@))
