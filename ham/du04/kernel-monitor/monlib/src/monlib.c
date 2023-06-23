@@ -1,11 +1,6 @@
 #include "monlib.h"
 
 static unsigned int packet_processed = 0;   /* Number of processed packets */
-static unsigned int ipv4 = 0;               /* Number of IPv4 processed packets */
-static unsigned int ipv6 = 0;               /* Number of IPv6 processed packets */
-static unsigned int tcp_packets = 0;        /* Number of TCP processed packets */
-static unsigned int tcp_syns = 0;           /* Number of TCP packets containing syn flag */
-static unsigned int packets = 0;            /* Number of processed packets */
 static unsigned int ipv4_packets = 0;       /* Number of IPv4 processed packets */
 static unsigned int ipv6_packets = 0;       /* Number of IPv6 processed packets */
 static unsigned int tcp_packets = 0;        /* Number of TCP processed packets */
@@ -34,7 +29,7 @@ int monlib_init(struct monlib_ctx *ctx)
 unsigned char ipv4_process(const unsigned char *packet, const unsigned char * start_of_L4)
 {
     // add one to detected ipv4 packets
-    ipv4++;
+    ipv4_packets++;
 
     // return L4 protocol
     return packet[9];    
@@ -44,7 +39,7 @@ unsigned char ipv4_process(const unsigned char *packet, const unsigned char * st
 unsigned char ipv6_process(const unsigned char *packet, const unsigned char * start_of_L4)
 {
     // add one to detected ipv6 packets
-    ipv6++;
+    ipv6_packets++;
 
     // check L4 Protocol
     start_of_L4 = packet + 40;
@@ -80,14 +75,14 @@ unsigned char ipv6_process(const unsigned char *packet, const unsigned char * st
     return byte;
 }
 
-unsigned char udp(const unsigned char * packet)
+unsigned char udp_process(const unsigned char * packet)
 {
     // add one more to detected udp packets
     udp_packets++;
     return 0;
 }
 
-unsigned char tcp(const unsigned char * packet)
+unsigned char tcp_process(const unsigned char * packet)
 {
     // add one more to tedected tcp packets
     tcp_packets++;
@@ -121,11 +116,11 @@ int monlib_process(struct monlib_ctx *ctx, const void *packet, const unsigned in
     // check L4 Protocol
     if(byte == 6) // TCP
     {
-        tcp(p);
+        tcp_process(p);
     }
     else if (byte == 17) // UDP
     {
-        udp(p);
+        udp_process(p);
     }
     else // unknown protocol
     {
@@ -139,8 +134,18 @@ struct monlib_stats monlib_get_stats(struct monlib_ctx *ctx)
 {
     struct monlib_stats stats;
     stats.packets = packet_processed;
-    stats.ipv4_packets = ipv4;
-    stats.ipv6_packets = ipv6;
+    stats.ipv4_packets = ipv4_packets;
+    stats.ipv6_packets = ipv6_packets;
+    stats.tcp_packets = tcp_packets;
+    stats.tcp_syns = tcp_syns;
+    stats.tcp_fins = tcp_fins;
+    stats.udp_packets = udp_packets;
+    stats.max_src_port = max_src_port;
+    stats.min_dst_port = min_dst_port;
+    stats.avr_byte_len = avr_byte_len;
+    stats.flows = flows;
+    stats.avr_flow_p_len = avr_flow_p_len;
+    stats.avr_flow_b_len = avr_flow_b_len;
     return stats;
 }
 
