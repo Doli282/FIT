@@ -43,13 +43,31 @@ TEST_CASE("Basic hash table api test") {
     hs_api.free(hashtable);
 }
 
+// Funciton for printing stats
+void print_stats(monlib_stats & stats)
+{
+    printf("packets: %u/%u\n", stats.packets, 43);
+    printf("ipv4_packets: %u/%u\n", stats.ipv4_packets, 43);
+    printf("ipv6_packets: %u/%u\n", stats.ipv6_packets, 0);
+    printf("tcp_packets: %u/%u\n", stats.tcp_packets, 41);
+    printf("tcp_syns: %u/%u\n", stats.tcp_syns, 2);
+    printf("tcp_fins: %u/%u\n", stats.tcp_fins, 2);
+    printf("udp_packets: %u/%u\n", stats.udp_packets, 2);
+    printf("max_src_port: %u/%u\n", stats.max_src_port, 3371);
+    printf("min_dst_port: %u/%u\n", stats.min_dst_port, 53);
+    printf("avr_byte_len: %u/%u\n", stats.avr_byte_len, 584);
+    printf("flows: %u/%u\n", stats.flows, 3);
+    printf("avr_flow_p_len: %u/%u\n", stats.avr_flow_p_len, 14);
+    printf("avr_flow_b_len: %u/%u\n", stats.avr_flow_b_len, 195);
+}
+
 TEST_CASE("Basic example pcap http test") {
     auto monlib = test_monlib_init();
     CHECK(test_monlib_pcap(monlib, "test_data/http.cap"));
 
     auto stats = monlib_get_stats(monlib.get());
+    print_stats(stats);
     CHECK(stats.packets == 43);
-
     CHECK(stats.ipv4_packets == 43);
     CHECK(stats.ipv6_packets == 0);
     CHECK(stats.tcp_packets == 41);
