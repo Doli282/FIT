@@ -86,7 +86,33 @@ unsigned char tcp_process(const unsigned char * packet)
 {
     // add one more to tedected tcp packets
     tcp_packets++;
+
+    // check flags
+    if(packet[13] & 1)
+    {
+        tcp_fins++;
+    }
+    if(packet[13] & 2)
+    {
+        tcp_syns++;
+    }
+
     return 0;
+}
+
+void check_ports(const __UINT16_TYPE__ * packet)
+{
+    // check ports
+    unsigned int port = packet[0];
+    if(port > max_src_port)
+    {
+        max_src_port = port;
+    }
+    port = packet[1];
+    if(port < min_dst_port)
+    {
+        min_dst_port = port;
+    }
 }
 
 int monlib_process(struct monlib_ctx *ctx, const void *packet, const unsigned int packet_len)
@@ -126,6 +152,9 @@ int monlib_process(struct monlib_ctx *ctx, const void *packet, const unsigned in
     {
         return 1;
     }
+
+    // check ports
+    check_ports(p);
 
     return 0;
 }
