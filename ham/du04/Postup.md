@@ -38,3 +38,8 @@ struct monlib_flow_stats {
     unsigned int byte_len;
     unsigned int packet_len;
 };
+
+# Testování
+
+V souboru *tests/src/basic_test.cpp* 
+jsem připsal testy na otestování výše uvedených hodnot
