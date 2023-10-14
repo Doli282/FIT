@@ -53,7 +53,7 @@ void print_stats(monlib_stats & stats)
     printf("tcp_syns: %u/%u\n", stats.tcp_syns, 2);
     printf("tcp_fins: %u/%u\n", stats.tcp_fins, 2);
     printf("udp_packets: %u/%u\n", stats.udp_packets, 2);
-    printf("max_src_port: %u/%u\n", stats.max_src_port, 3371);
+    printf("max_src_port: %u/%u\n", stats.max_src_port, 3372);
     printf("min_dst_port: %u/%u\n", stats.min_dst_port, 53);
     printf("avr_byte_len: %u/%u\n", stats.avr_byte_len, 584);
     printf("flows: %u/%u\n", stats.flows, 3);
@@ -74,7 +74,7 @@ TEST_CASE("Basic example pcap http test") {
     CHECK(stats.tcp_syns == 2);
     CHECK(stats.tcp_fins == 2);
     CHECK(stats.udp_packets == 2);
-    CHECK(stats.max_src_port == 3371);
+    CHECK(stats.max_src_port == 3372);
     CHECK(stats.min_dst_port == 53);
     CHECK(stats.avr_byte_len == 584);
     CHECK(stats.flows == 3);

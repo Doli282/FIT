@@ -20,7 +20,7 @@ struct monlib_stats {
     unsigned int udp_packets;       /* Number of UDP processed packets */
         = 2
     unsigned int max_src_port;      /* Number of Maximal seen source port(TCP,UDP) */
-        = 3371
+        = 3372
     unsigned int min_dst_port;      /* Number of Minimal seen destination port(TCP,UDP) */
         = 53
     unsigned int avr_byte_len;      /* Average byte length of the packets */
