@@ -1,0 +1,12 @@
+Digest for hwb1/javacard/ConstantPool.cap		[SHA-256: 84845780df06051cf6639393246e4da5a963ea74902337dcc66fa903c0913e38]
+Digest for hwb1/javacard/Debug.cap		[SHA-256: 5abb8e8dc328829e8b547a2e7736749ac43ece50ba2a707311b920b285b691f0]
+Digest for hwb1/javacard/Directory.cap		[SHA-256: d9fe99d56d22f65bc98b83bb08a568bf888b97128fcdba1539df5d1847b23514]
+Digest for hwb1/javacard/RefLocation.cap		[SHA-256: 0410f88cf9b2bedefa0a2d0de84d6528616b2370f10bdff3d885422c889a6187]
+Digest for hwb1/javacard/Applet.cap		[SHA-256: 0bee1b135cc7150cbea242f62b5d1e8d0768586ea41dba598a3bb33974b6d317]
+Digest for hwb1/javacard/Descriptor.cap		[SHA-256: 9e64ae95e4e4571c4207971ab1dc70e93eaed0486895efecefc0451658e99cb6]
+Digest for hwb1/javacard/Class.cap		[SHA-256: d9d25700030b420400f1f7fb6644c8439f4ac2cc262921ccfa76023ed78f01db]
+Digest for hwb1/javacard/Import.cap		[SHA-256: 5a025743641138f858ea16a1fd750df9a9e9a29c1f203bf00c80705b3ecb8542]
+Digest for hwb1/javacard/Method.cap		[SHA-256: 9fbb34454ea7d48e8c1df1aec01ee634be8583004831d2453178d19e4b119216]
+Digest for hwb1/javacard/Header.cap		[SHA-256: 139d880fb975d190ed745d46a0ccc6db486db8c3e7b1cc5c40500069ee422e76]
+Digest for hwb1/javacard/StaticField.cap		[SHA-256: 02801632edccefb1ed4f0f239d77cff9a97bbb7b4d6926e6fbfd59518728542f]
+Verification completed with 0 warnings and 0 errors.
