@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# vytahne si pocet stranek
+pages=$( curl "https://addons.mozilla.org/cs/firefox/search/?sort=rating&type=statictheme&page=1" 2>/dev/null |
+sed -rn 's|.*Stránka 1 z ([[:digit:]]*)<.*|\1|p' )
+
+# kontrola, jestli existuje cilovy adresar, zde pevne dany na 'pictures'
+if [ ! -d pictures ]; then
+    mkdir pictures;
+fi
+
+# for-cyklus na vytezeni vsech stranek
+for (( page=1; page<=$pages; page++ )); do
+
+# ulozi stranku do promene pro dalsi zpracovani
+tmp=$( curl "https://addons.mozilla.org/cs/firefox/search/?sort=rating&type=statictheme&page=${page}" 2>/dev/null)
+
+# vytahne ze stranky vsechny odkazy na addons (.xpi)
+#echo "$tmp" | sed -nr 's|src|\n|gp' | sed -e 's|\\u002F|/|g; s|"url":|\n|g' | sed -nr 's|.*"(http)(.*)(.xpi).*|\1\2\3|gp' >> "$1"
+
+# vytahne vsechny odkazy na obrazky  pripravi skript na stahnuti s kontrolou, zda uz neni obrazek stazen
+echo "$tmp" | sed -nr 's|\\u002F|/|g; s|class|\n|gp;' |
+sed -rn 's|.*src="(https://addons.mozilla.org/user-media/version-previews/full/)([[:digit:]]*)/([[:digit:]]*.*)(\?[^[:space:]]*)" alt.*|if [ ! -e pictures/\2_\3 ];then wget -O pictures/\2_\3 \1\2/\3\4 2>/dev/null; fi;|e'
+
+done
+

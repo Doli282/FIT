@@ -1,0 +1,15 @@
+#!/bin/bash
+
+max_item () {
+	ls "${1}"_* 2>/dev/null | grep -E "^$1_[[:digit:]]+$" | awk -F "_" '{print $NF}' | sort -nr | head -1;
+	if [ ${PIPESTATUS[0]} -ne 0 ]; then
+		echo "${0}: file with the name <${1}> does not exist in current directory" >&2
+	fi
+	if [ ${#PIPESTATUS[@]} -gt 0 ]; then
+	  if [ ${PIPESTATUS[1]} -ne 0 ]; then
+		echo "${0}: file with the name <${1}_> does not have other versions" >&2
+	  fi
+	fi
+	}
+
+max_item "$1"

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# kontrola poctu argumentu
+if [ $# -ne 2 ]; then
+    printf "%s\n\t%s\n" "$0: chybny pocet argumentu. Pouziti:" "$0 soubor_vstupnich_dat cilovy_adresar" >&2
+    exit 2;
+fi
+
+# kontrola citelnosti souboru s daty
+if [ ! -f "$1" ]; then echo "$0: soubor s daty neexistuje" >&2; exit 3; fi
+if [ ! -r "$1" ]; then echo "$0: soubor s daty neni citelny" >&2; exit 4; fi
+
+# priprava ciloveho adresare
+if [ ! -d "$2" ]; then mkdir "$2"; fi
+
+#  --- Vytvareni mapy s pripravou dat na nahrazovani  ---
+#pripraveno pro html data z http://bilakniha.cvut.cz/cs/f8-predmety.html
+cat "$1" |
+# vytahne kody predmetu
+sed -nr -e 's|.*td class.*nka">([^<>]*)</td>.*|\1|p' |
+sed -r "
+    # ulozi kod do hold bufferu pro dalsi pouziti
+    h
+    # pripravi prikaz na vytvoreni adresare daneho kodu
+    s|(.*)|if [ ! -d \"$2/\1\" ]; then mkdir \"$2/\1\"; fi;|e
+    # vrati do pattern bufferu ulozeny kod a zduplikuje ho
+    g
+    G
+    # prvni kod ponecha, '\n' nahradi za ':' a druhy kod pripravi o E/K
+    s|(.*)\n([[:alpha:]]*)[EK]-(.*)|\1:\2-\3|
+    # pokud nedoslo k predesle substituci -> jedna se o kod skutecneho predmetu -> pouze nahrad '\n' za ':'
+    s|\n|:|" |
+# uloz mapu prekladu
+tee "${2}/course_map.txt" |
+#  --- Vytvareni info.txt souboru ---
+# Vytvori info.txt souborz v adresari kazdeho predmetu
+sed -rn "
+    # pripravi prikaz pro vytvoreni souboru info.txt - zapise skutecny kod do adresare plneho kodu
+    s|(.*):(.*)| echo \"\2\" > \"${2}/\1/info.txt\"|e
+"

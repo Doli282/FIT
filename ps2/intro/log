@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ ! -e "$1" ]; then
+echo "${0}: wrong input";
+echo "${0}: put one log file as argument";
+exit 1;
+fi 
+
+
+cat "$1" | fgrep 'status>' | tail -n 1 | cut -d' ' -f1,3 | sed -e 's/\[/DATE=/' -e 's/-/|TIME=/' -e 's/] status>/|/' | tr '|' '\n' | sed -e 's/=/\t\t/' -e 's/US\t/US/' -e 's/ER\t/ER/';

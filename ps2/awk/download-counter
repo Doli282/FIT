@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+# vytahne eth0 recieved and transmitted bytes a prida je do logu
+cat proc.net.dev | tr -s ' ' | tr ':' ' ' | sed -ne /eth0/p | cut -d' ' -f 3,11 >> ./download.log
+# preda vytazene hodnoty do celkovych sum
+R=$(tail -n -1 download.log | cut -d' ' -f 1)
+T=$(tail -n -1 download.log | cut -d' ' -f 2)
+
+awk -v counterRecieved=$R -v counterTransmitted=$T '
+BEGIN{
+    FS=" "
+    # pocitadla pro Recieved bytes
+    currentR = 0
+    previousR = 0
+    # pocitadla pro Transmitted bytes
+    currentT = 0
+    previousT = 0
+}
+
+{
+    #Pokud je minula hodnota vetsi nez predchozi, maximim nalezeno, pricti do sumy
+    previousR = currentR
+    currentR = $1
+    if(currentR < previousR){
+        counterRecieved += previousR
+    }
+
+    previousT = currentT
+    currentT = $2
+    if(currentT < previousT){
+        counterTransmitted += previousT
+    }
+}
+
+# vypis souctu prenosu
+END{
+    print "Recieved:", counterRecieved, "bytes"
+    print "Transmitted:", counterTransmitted, "bytes"
+}' download.log

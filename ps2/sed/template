@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# help funkce vypise napovedu
+help () {
+    printf "%s\n\t%s\n\t%s\n" "$0: Pouziti:"\
+    "$0 [-h] data cilovy_adresar [konfiguracni_vzory ...]"\
+    "-h ... help - vypis napovedy k pouziti" >&"$1"
+}
+
+# zpracovani prepinacu
+while getopts h opt; do
+    case "$opt" in
+    h) help 1; exit 1;;
+    \?) echo "$0: neznamy prepinac" >&2; help 2; exit 2;;
+    esac
+done
+
+# kontrola argumentu
+# mene jak dva argumenty je chybne
+    if [ "$#" -lt 2 ]; then
+        echo "$0: Chybi argumenty. Dodano $# z 2" >&2
+        help 2;
+        exit 2;
+    fi
+
+# kontrola citelnosti vstupnich dat
+if [ ! -f "$1" ]; then
+    echo "$0: '$1' neni soubor" >&2; exit 3;
+fi
+if [ ! -r "$1" ]; then
+    echo "$0: chyba pri cteni dat" >&2; exit 3;
+fi
+
+# slozka do ktere se budou data ukladat musi existovat
+if [ ! -d "$2" ]; then
+    mkdir "$2" || { echo "$0: chyba pri priprave ciloveho adresare" >&2; exit 3;}
+fi
+
+# mene jak tri argumenty je podezrele
+if [ "$#" -eq 2 ]; then
+# prave dva argumenty - pouze se vytvori .data soubory ale ne konfigurace
+    echo "$0: Byla poskytnuta pouze vstupni dat -> vytvori se jen .data soubory" >&2
+fi
+
+# zbavi se argumentu se vstupnimi daty
+data="$1"
+shift
+# zbavi se argumentu udavajici cilovy adresar
+soubor="$1"
+shift
+
+# kontrola template souboru, zda jsou citelne
+for arg in "$@"; do
+    if [ ! -f "$arg" ]; then
+        echo "$0: '$arg' neni soubor" >&2
+    elif [ ! -r "$arg" ]; then
+        echo "$0: z '$arg' nelze cist" >&2
+    else
+    # pokud je soubor citelny prida se do noveho seznamu argumentu
+        newarg+=("$arg")
+    fi
+done
+
+#  --- Vytvareni .data souboru s pripravou dat na nahrazovani  ---
+#pripraveno pro html data z http://bilakniha.cvut.cz/cs/f8-predmety.html
+cat "$data" |
+# vytahne kody predmetu a jejich nazev (a k tomu jeste ucitele)
+sed -nr -e 's|.*td class.*">(.*)</.*|\1|p' |
+# zbavi se ucitelu a nechtene syntaxe html okolo a ybavi se anglickych a kombinovanych verzi predmetu -> zustanou jen "skutecne"
+sed -e '/<\/span>$/d' -e 's|</a.*||' -e '/.*[KE]-.*/{N;d;}' |
+# ulozi kod a jmeno predmetu do souboru -> jeden predmet jeden seoubor oznacen jeho kodem
+sed -rn "
+    # ulozi kod predmetu do hold bufferu -> z nej se vzdy vztahne na pojmenovani souboru
+    h;
+    # prepise radek s kodem na spustitelny prikaz 'echo', ktery se zapise do souboru pojmenovanem kod.data
+    s_(.*)_echo \"# Kód předmětu včetně pomlčky \n COURSE-CODE: \n\t\1\n\" > \"${soubor}/\1.data\"_e;
+    
+    # prepise pattern buffer nazvem kodu
+    g;
+    # prida do pattern bufferu kod jeste jednou
+    G;
+    # v druhem kodu se zbavi pomlcky
+    s/-//2;
+    # prepise pattern buffer na spustitelny kod, ktery zapise do souboru konfiguraci kodu bez pomlcky
+    # prvni kod je pouzit jako identifikator souboru, do ktereho se zapise konfigurace 
+    s_^([^\n]*)\n(.*)_echo \"# Kód předmětu bez pomlčky \n COURSECODE: \n\t\2\n\" >> \"${soubor}/\1.data\"_e;
+    
+    # prepise pattern buffer kodem predmetu
+    g;
+    # prida do pattern bufferu radek s nazvem predmetu
+    N;
+    # prepise pattern buffer na spustitelny prikaz, kdy je konfigurace se jmenem predmetu zapsana do souboru jmenem kod.data
+    s_^([^\n]*)\n(.*)_echo \"# Název předmětu \n COURSE-NAME: \n\t\2\" >> \"${soubor}/\1.data\"_e;
+"
+
+# --- Vytvareni konfiguracnich souboru pro jednotlive predmety -- 
+for kod in "${soubor}"/*.data; do
+    # zbavi nove vytvarne soubory pripony .data
+    kod=$( echo "$kod" | sed -r 's/(.*).data/\1/' )
+    # pripraveni sed skriptu pro jednotlive predmety
+    # hlavicka skriptu
+    echo "#!/bin/sed -f" > "${kod}.sed"
+    # z .data souboru vyrahne radku s ":" (ignoruje komentare) jako --KEY-- (pouze poledni slovo bez mezer) a nasledujici radku jako VALUE
+    # ignoruje mezery
+    sed -rn "
+    # ignoruje komentare a pripravi vzor
+    s/^[^#]* ([^# ]*):.*/--\1--/;
+    # pokud se nasel komentar, substituce se neprovede a skoc nakonec
+    Ta;
+    # pokud se substituce provedla nacti dalsi radek
+    N;
+    # zbav se mezer na zacatku a na konci a priprav skript pro sed
+    s|(.*--)\n[[:space:]]*(.*[^[:space:]])[[:space:]]*$|s/\1/\2/g|p;
+    :a"  "${kod}.data" >> "${kod}.sed"
+
+    # pro kazdy vzor konfiguracniho souboru v argumentu vytvori konfiguracni soubor specificky kazdemu predmetu
+    for template in "${newarg[@]}"; do
+    # soubory se ulozi napr do stejne slozky jako ostatni soubory
+        sed -f "${kod}.sed" "$template" > "${kod}.${template}"
+    done
+
+    # pripadny cleanup
+    # rm "${kod}.data" ${kod}.sed
+done

@@ -1,0 +1,25 @@
+#!/usr/bin/awk -f
+
+BEGIN{
+# inicializace celkovych sum
+    dat = 0
+    sum = 0
+    OFS="\t"
+}
+{
+# pricteni objemu do pocitadla konkretni IP
+    data[$7] += $9
+    dat += $9
+    cnt[$7] += 1
+    sum += 1
+}
+END{
+# vypis hlavicky
+    print "IP adresa", "Pozadavku", "Velikost dat", "% poz.", "% dat"
+    PROCINFO["sorted_in"] = "@val_num_desc"
+# vypis dat jednotlivych IP adres
+    for( ip in cnt){ 
+        printf "%s\t%9d\t%10d\t%5.1f\t%5.1f\n", ip, cnt[ip], data[ip], 100*cnt[ip]/sum, 100*data[ip]/dat
+    }
+}
+

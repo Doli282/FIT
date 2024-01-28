@@ -1,0 +1,35 @@
+=head1 boom.pl
+
+=head2 SYNOPSIS
+
+=over 2
+
+B<boom.pl> [I<countdown>] 
+
+=back
+
+=head2 DESCRIPTION
+
+=over 2
+
+=begin man
+
+Count down from given number till 1 and print BOOM!. The amount of "O" printed is in accordance to the given argument. If the argument is less than 2, print defaultly BOOM! with two "O"s.
+
+=end man
+
+=back
+
+=over 3
+
+=item argument must be an integer. It is checked with C<($ARGV[0] =~ /^[0123456789]+$/)>
+
+=back
+
+=head2 SEE ALSO
+
+=over 1
+
+L<perl_cv4|https://www.courses.fit.cvut.cz/BI-PS2/@master/tutorials/perl/4/index.html>
+
+=back
