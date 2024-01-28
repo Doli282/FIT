@@ -1,0 +1,4 @@
+m_Symbol (non-white character)(char)
+m_Type (int 1/2)
+m_HP (int >= 0)
+m_Points (int >= 0)

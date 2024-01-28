@@ -1,0 +1,102 @@
+# TOWER DEFENSE
+
+# --- PROGTEST ---
+
+Naprogramujte jendoduchou grafickou tower defense hru
+
+Váš engine:
+
+ze souboru nahraje definici věží (cena, velikost, útok, dosah, ...)
+ze souboru nahraje možné mapy a typy nepřátel (životy, rychlost, odolnost na určitý typ věže ,...)
+implementuje jednoduchou interakci věž vs. útočníci (útok, proběhnutí, ...), počitadlo skóre, detekci vítězství (po nezabití x útočníků)
+implementuje alespoň 2 strategie průchodu hracím polem
+umožňuje ukládat a načítat rozehrané hry
+Engine může fungovat jako real-time hra, či tahová hra.
+
+Jak může vypadat mapa?
+
+" " označuje možnou lokaci věže a prázdné místa, A, B označuje dva druhy věží, # označuje zeď, @ a % jsou různé druhy útočníků.
+
+ 
+#################################################
+#                        #       @@  #          #
+#         #              #    %B  @  ###        #
+#         #              #    %#  @    #    B   #
+<=%%%     #              A    %#       #@@@@@@@<=
+#         #              A    %#       @@   B   #
+#                        A    %#                #
+#                 %%%       %%%#                #
+#################################################
+
+Cesta kudy se budu útočníci ubírat bude vždy nejkratší možná vzhledem ke zdím a věžím. "Nejkratší" se může lišit pro létající (ignorují zdi) a pozemní jednotky. Pro chytré jednotky, které se vyhýbají věžím. Pro jednotky s krátkým dohledem (k pohybu využívají jen informaci o okolí 5ti polí a cíl).
+
+Kde lze využít polymorfismus? (doporučené)
+
+Parametry věží: znak, barva, dosah, zranění, ...
+Efekty útoku věží: zranění, zpomalení, ...
+Políčka mapy: volno, věž, útočník ...
+Strategie hledání cesty: předdefinovaná cesta, nejkratší (BFS, případně náhodná odchylka), A* prohledávání, vyhýbání se věžím
+Uživatelské rozhraní: konzole, ncurses, SDL, OpenGL (různé varianty), ...
+Ukázky:
+
+https://en.wikipedia.org/wiki/Tower_defense
+https://en.wikipedia.org/wiki/GemCraft
+http://plantsvszombies.wikia.com/wiki/Main_Page
+
+
+# --- SPECIFIKACE ---
+
+Vytvoříme hru 'Tower Defense'.
+
+## Fáze hry:
+Bude se jednat o tahovou strategii, kde se budou střídat fáze 'příprava obrany' a 'útok'.
+Ve fázi 'příprava obrany' bude mít hráč možnost rozmístit nové věže, ve fázi 'útok' bude hráč sledovat, zda-li je jeho obrana dostatečná vůči objevujícím se nepřátelům.
+Za zabití nepřátel ve fázi 'útok' obdrží hráč body, za které bude moci ve fázi 'příprava obrany' stavět nové věže.
+
+## Cíl hry:
+Hra končí, pokud hráči došly životy, tj. příliš mnoho nepřátel prošlo hrací plochou až do cíle.
+
+
+## Uživatelské rozhraní:
+Po grafické stránce bude hra implementována v terminálu za využití doplňujících knihoven (např. libncurses).
+Hra se bude ovládat pomocí vstupu z klávesnice.
+
+Po spuštění aplikace se hráči objeví menu s možnostmi:
+
+1. Load game - umožní načíst uloženou hru
+2. Help - vypíše uživateli ovládací prvky hry, krátký manuál
+3. Exit - ukončí aplikaci
+
+Ve hře bude mít hráč možnost ve fázi 'příprava obrany' na mapě rozmisťovat věže. Ty se budou vybírat z nabídky, kde se budou zobrazovat specifikace jednotlivých věží.
+
+Hru bude možno přerušit, uložit do souboru a ukončit.
+
+
+## Data:
+Aplikace bude svá data načítat ze souborů. Bude se jednat o definice věží, nepřátel a map.
+Soubory s daty map obsahují všechna data o uložené hře
+
+## Věže:
+Věže budou mít následující (mimo jiné) specifikace:
+- znak
+- zranění
+- dosah
+- typ (země/vzduch/univerzál)
+- cena
+- speciální typ
+
+## Nepřátelé:
+Nepřátelské jednotky budou mít (mimo jiné) nasledující specifikace:
+- znak
+- životy
+- typ jednotky
+- typ průchodu
+
+# --- Polymorfismus ---
+
+Polymorfismus se vyskytuje především u objektů na mapě. Zde mám připravenou nadnadřídu CUnit, která je všechny zastřešuje
+Ze CUnit se odštěpují CDistinctPoint (pro START a END), CTower a CEnemy, které umožňují dynamickou vazbu. 
+
+CTower je nadtřída všech věží a může se dále dělit na různé specializované věže. V tuto chvíli konkrétně na věž, která přetěžuje metodu fire() na plošným útok.
+CEnemy je abstraktní nadtřídou všech nepřátel a dělí se na podtřídy CEnemyBlindLeft/Right, CEnemyShortest a CEnemyShortestAir. Tyto podtřídy umožňují sdílet statickou proměnnou, kterou je předem vypočítaná cesta od startu do cíle, které se jednotky dané skupiny budou držet.
+CEnemy, respektive CTower, budou rozlišovat pozemní a letecké jednotky. U CEnemy tak bude dosáhnuto samostatnou třídou, kvůli hledané cestě. Naopak u CTower se o toto rozdělení postará parametr.

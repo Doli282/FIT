@@ -1,0 +1,97 @@
+  **** HELP **** TOWER DEFENCE ****
+Goal:
+Defeat all enemies before they reach END.
+
+End of the Game:
+Game ends when Lives reaches zero, i. e. too many enemy units reach END
+
+Game Turns:
+Game is divided between two phases -> Preparation and Defence
+During Preparation, player builds towers on the map. Player spends Coins recieved for defeating enemies to build a tower.
+During Defence, enemies are spawn on START and move towards END. For every defeated unit, Coins and Score is recieved.
+
+
+!! Warning !!
+It is strongly recommended to preserve one size of terminal throughout the whole game session as it may disrupt the graphic.
+
+
+Layout:
+Messages---+  User Input: accepts string-like user input
+|user input|            : acceptable keys: BACKSPACE, DEL, ARROWS LEFT/RIGHT, graphical symbols + space 
++----------+            : end of input: ENTER = success; ESC = failure
++---------++-------------++-----------+
+|TowerWiki||             || GameStats |   GameStats: shows statistics of current game
++---------+|   MAP       |+ErrMessages+            : Lives - while above zero, game continue, decreases each time enemy unit reaches END
++---------+|             |                         : Score - sum of Points of all defeated units
+|EnemyWiki||             |                         : Coins - increases after defeating enemies, spent by build towers
++---------+|             |                         : Level - increases each turn, has effect on the number of enemies spawned
+           +-------------+  ErrMessages from game during BUilding Regime
+
+TowerWiki and EnemyWiki show basic information about unit class
+Units with the same symbol start with the written characteristic
+All presented Units can appear during the game
+
+Shown statistics: TowerWiki
+(sym) Symbol = symbol denoting that unit
+(type) Type = 1-ground; 2-air; 3-universal; B-basic->attacks one unit at a time; S-splash->attacks all units in range
+(dmg) Damage = damage per hit to enemy units
+(cld) Cooldown = Tower fires once per 'n' steps (1 step = enemies move to neighbouring field)
+(rng) Range = how far can tower attack (in fields)
+(cost) Cost = how many Coins does the tower cost to build
+
+Shown statistics: TowerWiki
+(sym) Symbol = symbol denoting that unit
+(HP) Health Points = how much Damage may unit recieve before it is defeated
+(path) Path = which algorithm unit uses to cross the map
+  -> BR - follows walls/towers by its right hand avoiding towers (in a sense that they do not step on fields where a tower is)
+  -> BL - follows walls/towers by its left hand avoiding towers (in a sense that they do not step on fields where a tower is)
+  -> BFS = Breadth First Search - shortest path avoiding towers (in a sense that they do not step on fields where a tower is)
+  -> AIR - shortest path ignoring towers
+(type) Type = 1-ground; 2-air
+(pts) Points = reward added to Coins and Score for defeating that enemy unit
+
+
+Map: shows progress during the game
+START always points inwards, END outwards (symbols <,^,>,V)
+
+Control Keys:
+
+Main Menu:
+'Up; and 'Down' arrow keys for moving
+'Enter' for continuing with highlighted choice
+
+Help:
+- scrolling the manual with 'Up' and 'Down' arrow keys
+- terminal window size can be changed while viewing the Help manual, but than, please, restart the game
+
+Field for user input (for saving and loading games):
+- allowed input = keys with graphical symbols + 'Spacebar'
+- moving cursor with 'Left' and 'Right' arrow keys
+- delete characters by 'Backspace' and 'Delete' keys
+- press 'Enter' to confirm the input
+- press 'Esc' to invalidate input (end of input (Ctrl+d) invalidates input)
+for confirming overwriting saved file 'y' or 'n' keys are requested
+
+!! Warning !!
+The response after pressing 'Esc' key is slower than by pressing other keys.
+
+Preparation Phase:
+- uses folloing keys
+h/H = Help
+b/B = Building Regime
+n/N = Next turn -> go to Defence phases
+s/S = Save game
+q/Q = Quit game -> go to Main Menu
+
+Building regime:
+- move cursor with arrow keys
+- build a tower by pressing key with character corresponding to symbol of that tower
+-> e.g. Build a tower with symbol 'A' by pressing A (Shift+a)
+-> tower is build on the position of the cursor
+-> must be build on empty field, with corresponding funds, while preserving a road for enemies that they still can reach END
+- exit Building regime by pressing 'Esc'
+- delete a tower by pressing 'del' key
+-> tower on on thw field of the cursor is dismantled and part of its building cost is returned to Coins  
+
+Defence phase:
+-fully autonomous, player can speed up this phase by pressing any key, but cannot be stopped
