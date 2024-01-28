@@ -1,0 +1,1 @@
+for /f %%i in (pukl.txt) do taskkill /im %%i /fi "username eq %userdomain%\%username%" /f 2>nul | find "SUCCESS" && echo %%i zabit v %date% %time% >> out.txt
