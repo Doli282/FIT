@@ -1,0 +1,12 @@
+// Copyright (c) 1998, 2021, Oracle and/or its affiliates. All rights reserved.
+
+// Applet Selection APDU Script
+//
+// Package:     hwb1.hwb1
+// Package AID: //aid/0123456789/06
+// Applet:      hwb1.FirstApplet
+// Applet AID:  //aid/0123456789/0607
+//
+
+// Select hwb1.FirstApplet applet
+0x00 0xA4 0x04 0x00 0x07 0x01 0x23 0x45 0x67 0x89 0x06 0x07 0x7F;
