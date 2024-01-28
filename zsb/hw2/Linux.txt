@@ -1,0 +1,154 @@
+1) uživatelský účet
+
+Uživatele přidáme pomocí utility 'useradd':
+> useradd -m -s /bin/bash -G "$(grep 'sudo' /etc/group | cut -d: -f3)" uzivatel
+
+-m ... vytvoří domovský adresář užvatele
+-s ... nstaví login shell
+-G ... přiřadí uživateli sekundární členství ve skupině "sudo"
+"$(grep 'sudo' /etc/group | cut -d: -f3)" ... najde GID skupiny "sudo"
+
+-> zde jsme uživatele dali do sekundární skupiny sudo (-G "$(grep 'sudo' /etc/group | cut -d: -f3)"), přiřadili mu bash (-s /bin/bash) jako výchozí shell a připravili mu domovský adresář (-m)
+
+Pomocí 'passwd' nastavíme uživateli heslo
+
+> passwd uzivatel
+
+Konkrétní práva přidáme uživateli zapsáním do /etc/sudoers příkazem visudo nebo vytvořením souboru v /etc/sudoers.d/. Do sudoers napíšeme řádek:
+
+uzivatel localhost=(root) /usr/bin/apt-get update
+
+'uzivatel' může nyní spouštět '/usr/bin/apt-get update' na zařízení 'localhost' jako 'root'.
+
+------------------------------------------------------------------------
+2) SSH
+
+Službu zapneme pomocí příkazu:
+> systemctl start ssh.service
+
+(a poté vypneme pomocí příkazu:)
+> systemctl stop ssh.service
+
+Nastavení konfigurace ssh
+> nano /etc/ssh/sshd_config
+
+2A)
+Pro zákaz přihlašování jako root upravíme řádek PermitRootLogin na 
+"PermitRootLogin no"
+
+2B)
+Pro změnu portu přepíšeme a odkomentujeme řádek s portem a nastavíme třeba Port = 32145. Změna portu zmátne boty, které skenují a specificky hledají otevřené standardní porty. Jedná se o "security through obscurity", tudíž se nejdená o řešení problému, ale dokážu tím zmást automatizované scany a případné útočníky.
+
+2C)
+SSH server by default používá verzi SSH-2.
+Od verze OpenSSH 7.6 je SSH-1 úplně odstraněna.
+
+V sshd_config bylo (je) možné verzi specifikovat pomocí:
+
+Protocol 2
+
+2D)
+SSH baner připravíme v samostatném souboru a pak vložíme v konfiguračním souboru cestu. A nebo napíšeme "none", a server žádný banner neukáže.
+
+"Banner none"
+nebo
+"Banner /etc/ssh/banner.txt"
+
+Do banner.txt dáme třeba:
+"Speak friend, and enter."
+
+2E)
+Pomocí AllowUsers definujeme konkrétní uživatele, kteří se mohou přes ssh připojit. Ostatní uživatele se nebudou moci připojit.
+
+AllowUsers uzivatel
+
+
+2F)
+ssh klíče se generují pomocí 'ssh-keygen' (na klientovi)
+> ssh-keygen
+
+Nyní nahrajeme klíč na server:
+
+> ssh-copy-id -i ~/.ssh/id_rsa.pub -p 32154 uzivatel@localhost
+
+2G)
+Pro povolení připojení pomocí klíče je nutné mít v sshd_config povoleno, což už může být povoleno by default: 
+
+PubkeyAuthentication yes
+
+Naopak můžeme třeba zakázat přihlášení pomocí hesla:
+
+PasswordAuthentication no
+
+
+-------------------------------------------------------------------
+3) repozitáře
+Kontroluji repozitáře odkud 'apt-get' stahuje aktualizace. Repozitáře jsou uloženy v '/etc/apt/sources.list'.
+
+Pro kontrolu změn zkopírujeme soubor do '/root' adresáře, který je přístupný jen pro roota.
+
+# cp  /etc/sources.list /root/sources_backup.list
+
+V '/root' si připravím skript 'check_repositories.sh', který kontroluje změny a případné rozdíly zapíše do logu:
+
+#!/bin/bash
+
+#Variables
+ORIGINAL='/etc/apt/sources.list' # sources.list in effect
+BACKUP='/root/sources_backup.list' # backup file with original settings
+LOG='/root/check_repositories.log' # log with changes
+NOTIFICATION='/root/notification.txt' # notification for root
+
+# check differences with the backup sources.list and save them to log
+diff "$ORIGINAL" "$BACKUP" >> "$LOG"
+if [ $? -ne 0 ]; then
+        echo "" >> "$LOG"
+        echo "There are changes in the repositories. - ran at $(date)" >> "$LOG>
+        echo "" >> "$LOG"
+        echo "There are chnages in the repositories." > "$NOTIFICATION"
+fi
+
+Ze skriptu uděláme spustitelný soubor.
+
+# chmod 0750 /root/check_repositories.sh
+
+Pravidelné spouštění skriptu jednou za den zajistíme v cronu ...
+
+# crontab -e
+
+... přidáním řádky:
+
+0 * * * * /root/check_repositories.sh
+
+Nakonec do '/root/.bashrc' (nebo '/root/.zshrc' dle systému) přidáme kontrolu nové notifikace, která ji vypíše při dalším přihlášení na terminál
+
+# Check for notifications
+if [ -f /root/notification.txt ]; then
+        cat /root/notification.txt
+        rm /root/notification.txt
+fi
+
+-----------------------------------------------------------------------
+4) fail2ban
+
+Instalace například pomocí:
+
+# apt install fail2ban
+
+Pro konfiguraci si vytvoříme 'jail.local', jelikož konfigurace z 'jail.conf' je přepsána konfigurací z 'jail.local'.
+
+# nano /etc/fail2ban/jail.local
+
+Přidáme řádky:
+
+[sshd]
+enabled = true
+port = 32154
+filter = sshd
+maxretry = 5
+findtime = 43200
+bantime = 86400
+banaction_allports = iptables-allports
+logpath = /var/log/auth.log
+
+Nyní Fail2Ban na 24 hodin zabanuje klienta, který se 5x během 12 hodin pokusí nepovedeně přihlásit na ssh na portu 32154

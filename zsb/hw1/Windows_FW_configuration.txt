@@ -1,0 +1,52 @@
+---- Windows Defender Firewall (WFW)----
+
+Úvod:
+- WFW je filtr s pravidly pro přijímaní komunikace ze sítě do zařízení a propouštění komunikace od zařízení do sítě.
+- WFW podporuje protocol IPsec umožňující autentizaci zařízení a šifrování komunikace.
+- WFW je integrovaná ve Windows.
+- Jedná se o host-based firewall.
+
+Význam:
+- WFW umožňuje zmenšit attack surface.
+- Jedná se o další obranu v konceptu defense-in-depth.
+- Využití IPsec umožňuje posílit integritu a důvernost dat pomocí šifrování a autentizace zařízení.
+
+Doporučení pro konfiguraci:
+- Microsoft Management Console (MMI) umožňuje pokročilejší správu WFW než Ovládací panely.
+- Omezte filtry pouze nutnou a autorizovanou komunikaci
+- Rozdělte síť do zón a skupin pro oddělení komunikace zvenčí a (potenciálně citlivé) vnitřní, skrze demilitarozovanou zónu. Zařízení ve vnitřní síti poté budou komunikovat pouze s vnitřními zařízeními a budou odstíněna od vnější komunikace. Navíc i vnitřní síť rozdělte do segmentů dle toho, jaká zařízení spolu mají/nemají komunikovat.
+- Používejte centralizovanou správu - Active Directory. Připojení zařízení mimo AD lze umožnit pomocí certifikátů.
+- Filtr nastavujte pomocí white-listu, tj. defaultně deny ALL a pouze specifické komunikace pustit dále.
+- Zakažte veškerou příchozí nevynucenou (tj. nejedná se o odpověď) komunikaci, pokud to není explicitně uvedeno, odpovídá to povaze zařízení, případně jedině po autentizaci skrze Active Directory či certifikáty
+- Šifrujte komunikaci.
+- Zdokumentujte konfigurace a později také každou změnu.
+- Používejte i další stupně ochrany, další FW, IDS, IPS, ...
+
+- Instalátory nových aplikací přidávají pravidla do FW. Pokud se pravidlo nepřidá, vyskočí upozornění při první komunikaci. Pokud není povoleno nebo uživatel nemá dostatečná práva, bude vytvořeno zakazující pravidlo.
+-> Pozor na automaticky vytvořené zákazy, pokud nejsou pravidla připravena dopředu.
+
+- pro příchozí komunikaci mají pravidla následující pořadí:
+- - specifičtější pravidlo má vždy přednost
+- - explicitní zákaz > explicitní povolení > defaultní zákaz
+
+- V případě akutního útoku použijte "shields-up" mód, který zakáže všechna příchozí spojení, včetně povolených aplikací.
+
+- Pro odchozí komunikaci je pro bezproblémové fungování defualtní black-listing. Pro větší bezpečnost, i za cenu horšího managementu, je však lepší white-listing.
+
+Doporučená konfigurace pro malou firmu:
+- základní FW design dle https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/basic-firewall-policy-design
+-> Defaultní nastavení WFW podporuje většinu nastavení.
+- Pro implementaci doporučuji postupovat dle následujícího checklistu: https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/checklist-implementing-a-basic-firewall-policy-design
+
+Praktický příklad:
+: malá firma s webovým a mailovým serverem, které jsou dostupné z internetu
+: FW konfigurace na koncové stanici
+-> koncová stanice komunikuje s web serverem i mail serverem.
+-> koncová stanice musí inicializovat komunikaci s mail serverem.
+-> koncová stanice může přijmout nevyžádanou komunikaci od web serveru (front-end), ale nebude komunikovat s back-endem.
+-> jednotlivé koncové stanice spolu komunikovat nesmí.
+
+
+Zdroje:
+https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/windows-firewall-with-advanced-security
+https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/best-practices-configuring

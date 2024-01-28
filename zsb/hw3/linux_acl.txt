@@ -1,0 +1,26 @@
+LINUX
+1)
+
+Příprava:
+
+cd ~
+mkdir homework
+touch homework/file{1,2,3}.txt
+chmod 0600 homework/file{1,2,3}.txt
+
+skript readGroupAdd.sh pro přidání oprávnění
+
+skript readGroupDel.sh pro odebrání oprávnění
+
+
+2)
+Příprava:
+
+mkdir acl_demo
+mkdir acl_demo/public
+mkdir acl_demo/private
+chmod a+rw acl_demo/public 
+
+skript setAccessRights.sh pro nastavení acl
+
+skript getAccessRights.sh pro čtení acl

@@ -1,0 +1,26 @@
+ ---- Správa účtů a heslové politiky ----
+ 
+Pokyny pro správu účtů a heslové politiky
+1) Zaveďte centrální správu uživatelských účtů a oprávnění s jednotnou bezpečnostní politikou. Např. Active Directory pro Windows.
+2) Účtům přidělujte pouze minimální nutná oprávnění. Účtům zakažte spouštění skriptů, stahování a instalaci softwaru, úpravy registrů, atd. Oprávnění pravidelně aktualizujte, aby se stále jednalo o nejmenší nutná oprávnění.
+3) Zaveďte vícefaktorovou autentizaci.
+4) Používejte privilegované (administrátorské) účty pouze při provádění administrátorských úkonů. K běžné práci využívejte bežné účty. Úšet doménového administrátora používejte pouze ke správě Domain Controlleru.
+5) Nepoužívejte sdílené účty. Přidělte každému administrátorovi vlastní účet. - Pro rozdělení odpovědnosti
+6) Zabezpečte lokální administrátrské účty. Nastavte unikátní hesla. Windows nabízí LAPS (Local Administrator Password Solution).
+7) Vynuťte používání silných hesel:
+7a) Zamezte opakovanému použití stejných hesel a slovníkových výrazů. Pro slovníkové výrazy lze například použít rainbow tables vůči kterým se budou hesla kontrolovat.
+7b) V případě podezření na kompromitování hesel a systému přikročte ke změnám hesel.
+7c) Při vytváření hesel je důležitější délka spíše než komplikovanost. Udržujte požadavek na minimální délku hesla (více jak 8-12 znaků) Naopak nenuťte uživatele používat všechny sady znaků (malá a velká písmena, číslice, speciální znaky).
+7d) Hesla by měla umožňovat délku až 64 znaků - hesla se nesmí ozeřávat na maximální délku.
+7e) Zakazuje se ukládání a zobrazování nápověd k heslům. Zakazují se dotazy na specifické znalosti uživatele.
+7f) Neměly by se používat mechanismy pro pravidelnou změnu hesla.
+7g) Při ověřování hesel musí být použity zpomalovací mechanismy.
+7h) Hesla musí být uložena tak, aby byla odolná offline útokům.
+8) Pro konverzi hesla na klíč je nutné za použití dynamické soli (rozdílné pro každého uživatele) používat ověřenou funkci pro odvozování klíčů (key-derivation function): bcrypt, scrypt, Argon2, ...
+
+
+
+Zdroje:
+https://learn.microsoft.com/en-us/microsoft-365/admin/misc/password-policy-recommendations?view=o365-worldwide
+https://www.nukib.cz/download/publikace/vzdelavani/Admin%204.0%20brozura.pdf
+https://courses.fit.cvut.cz/BI-BEK/media/lectures/bek08cz.pdf
