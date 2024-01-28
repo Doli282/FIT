@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+# kontrola vstupu
+if [ $# -ne 1 ]; then
+    printf "%s\n\t%s\n" "$0: spatny pocet argumentu. Pouziti:" "$0 soubor"
+    exit 2;
+fi
+
+# vytahne pocet sloupcu terminalu
+COLUMNS=$( tput cols )
+
+# pozadovana sirka textu -> napr. sirka terminalu
+col="$(( $COLUMNS/2 - 2 ))"
+# nacte $col znaku z kazde strany a mezilehle znaky nahradi za '...'
+sed -r "s|(.{$col}).....*(.{$col})|\1...\2|" "$1"

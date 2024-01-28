@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# prekopiruje cile z PATH do pole v 1. argumentu
+array_PATH () {
+	# kontrola spravneho zadani argumentu
+	if [ $# -ne 1 ]; then
+		echo "array_cp(): Error: wrong number of arguments. Use: array_cp NewArray" >&2
+		exit 1;
+	fi
+	typeset -n  ref="$1"
+	x=0
+# for dest in ${PATH//:/ }; do # za pouziti substituce
+	# za pouziti IFS:
+	oldIFS="$IFS"
+	IFS+=":"
+	for dest in $PATH; do
+		ref[x]="$dest"
+		((x++));
+	done;
+	# vraceni puvodnich hodnot
+	IFS="$oldIFS"
+}
+
+# Prekopiruje prvky pole
+# 1. argumentem je budouci pole, do ktereho se bude kopirovat. Puvodni pole musi byt predano funkci rozlozene
+array_cp () {
+	# kontrola spravneho zadani argumentu
+	if [ $# -lt 2 ]; then # muze pole i slucovat pokud jsou dany i dalsi argumenty navic
+		echo "array_cp(): Error: wrong number of arguments. Use: array_cp NewArray Elements of source Array" >&2
+		exit 1;
+	fi
+	# predani pomoci reference
+	typeset -n ref="$1"
+	shift;
+	# zkopirovani pole
+	x=0
+	for var; do
+		ref[x]="$var"
+		((x++));
+	done;
+	# echo "${POLE[@]}" # predani pomoci tisku -> pote ve volajcici funkci bude kopie=$(array_cp ArrayOriginal) a budouci pole nemusi byt v argumentech
+}
+
+# prida prvek na konec pole
+# pokud prvek pole jiz obsahuje, presune jej na konec
+# Prvek prida k jiz existujicimu poli v 1. argumentu
+array_append () {
+	# kontrola spravneho zadani argumentu
+	if [ $# -lt 2 ]; then
+		echo "array_append(): Error: wrong number of arguments. Use: array_append newElement [NewElements]" >&2
+		exit 1;
+	fi
+
+	typeset -n  ref="$1"
+	shift;
+	for var; do
+		length="${#ref[@]}"
+		# prekontroluj kazdy prvek v poli, zda se nejedna o novy prvek
+		for (( x=0 ; x < length ; x++ )) {
+			if [ "$var" = "${ref[x]}" ]; then #parametr se v poli uz vyskytuje
+				# iteracni promena ukazujici o jeden prvek dopredu
+				z=x
+				((z++))
+				# snizi celkovou velikost pole
+				((length --))
+				# setrese pole o jedno doleva
+				for (( y=x; y < length; y++)) {
+					ref[y]="${ref[z]}"
+					((z++))
+				}
+				break;
+			fi
+			
+		}
+		# zapis novy prvek na konec
+		ref[length]="$var"
+	done
+}
+
+
+echo "------ array_PATH -------"
+declare -a CESTA
+echo "PATH: ${PATH}"
+array_PATH CESTA
+echo "CESTA: (${CESTA[@]})"
+# -> /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin /usr/games /usr/local/games /snap/bin
+echo "------ array_cp ---------"
+POLE=(a b c 1 3 5 7 9)
+declare -a newPole
+echo "puvodni pole: (${POLE[@]})"
+array_cp newPole "${POLE[@]}"
+echo "kopie pole: (${newPole[@]})"
+# -> a b c 1 3 5 7 9
+echo "------ array_append ---------"
+echo "pole pred append: (${POLE[@]})"
+plus=(a b x e)
+echo "pridano: ${plus[@]}"
+array_append POLE "${plus[@]}"
+echo "pole po append: (${POLE[@]})"
+# -> c 1 3 5 7 9 a b x e
+echo "------ array_append prazdne pole ---------"
+declare -a POLE2
+echo "pole pred append: (${POLE2[@]})"
+plus=(a b x e)
+echo "pridano: ${plus[@]}"
+array_append POLE2 "${plus[@]}"
+echo "pole po append: (${POLE2[@]})"
+# -> a b x e

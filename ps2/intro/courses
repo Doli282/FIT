@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#has the file with data
+if [ ! -f "$1" ]; then
+	echo "${0}: wrong input";
+	echo "${0}: put one \"courses\" file as argument";
+	exit 1;
+fi 
+
+dir="courses_dir"
+#create new directory
+if [ ! -d "./${dir}" ]; then
+	mkdir "$dir";
+fi
+
+#create dir for each subject
+cat "$1" | grep -F 'I-M' | tee "${dir}/tmp.txt" | cut -d'"' -f8 | tr -d '/' > "${dir}/sub_tmp.txt";
+cd "$dir";
+echo "${0}: created directories for subjects are listed here:";
+for subject in $(cat ./sub_tmp.txt); do
+	mkdir "$subject" 2>/dev/null && echo " ${0}: directory for $subject created";
+	echo "===== $subject =====" > "./${subject}/index";
+done
+
+#code of the semester
+R="$(cat tmp.txt | tail -n 1 | cut -d '>' -f10 | tee date.txt | cut -c3,4)"
+A="$(cat date.txt | cut -d'-' -f2)"
+if [ "$A" -gt 2 -a "$A" -lt 9 ]; then S=2; else S=1; fi
+
+#info file
+echo "B${R}${S}" > info;
+
+#cleanup
+rm date.txt sub_tmp.txt tmp.txt
+
+# echo "${0}: operation completed"

@@ -1,0 +1,35 @@
+#!/bin/sed -nf
+
+#prvni radek vypisu:
+#nalezeni radku
+/^.*<p>Platnost.*$/{
+	#ponech v radku pouze datum a cislo
+	s|.* pro \([0-9 \.]*\), .*: \([0-9]*\).*$|\1 #\2|;
+	#doplnuje leading zeros
+	s|\<[0-9]\>|0&|g;
+	#odebere mezeru v datumu
+	s|\. |\.|gp; 
+};
+
+# zpracovani tabulky:
+# pro radky mezi radky s '<tr>' a '</tr>' ... 
+/^.*<tr>.*$/,/^.*<\/tr>.*$/{
+	
+	# pro radky s '<td' nebo '<th' ... uloz cely radek tabulky do hold bufferu, a nahrad '\n' za '|'
+	/^.*<t[dh]/{
+		# vymaz vse krom textu mezi '> <'
+		s|^.*t[dh].*>\(.*\)<.*$|\1|;
+		# vysledek substituce pridej do hold bufferu
+		H;
+		# vymaz pattern buffer a resetuj cyklus
+		d;
+	};
+	# vymaz pattern buffer -> ktery se stane hold bufferem
+	s/.*//;
+	# prohod buffery
+	x;
+	# zbav se prvni '\n'
+	s/\n//;
+	# nahrad '\n' za '|'
+	s/\n/|/gp;
+};

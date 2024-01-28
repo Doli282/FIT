@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# incializace promenych
+DEBUG=0
+VERBOSE=0
+#parameters=("Libs" "Master" "Courses" "CourseTemplate" "WikiTemplate" "ApacheUser" "ApacheGroup" "WikiAdmin" "WikiManager" "Users" "CoursesMap")
+typeset -A parameters
+parameters=([Libs]="" [Master]="" [Courses]="" [CourseTemplate]="" [WikiTemplate]="" [ApacheUser]="" [ApacheGroup]="" [WikiAdmin]="" [WikiManager]="" [Users]="" [CoursesMap]="")
+
+help () {
+    printf "%s\n\t%s\n\n\t%s\t%s\n\t%s\t%s\n\t%s\t%s\n" "USAGE: $0 [-vd] conf_file ..." "$0 -h" "-v" "verbose" "-d" "debug" "-h" "help" >&$1
+}
+
+# zpracovani prepinacu
+while getopts vdh opt; do
+    case "$opt" in
+    h) help 1; exit 0 ;;
+    d) DEBUG=1;;
+    v) VERBOSE=1;;
+    \?) help 2; exit 2 ;;
+    esac
+done
+
+
+shift $(expr $OPTIND - 1)
+
+# zkontroluj, jestli jsou argumentem predany konfiguracni soubory
+if [ $# -lt 1 ]; then
+    echo "$0: missing files" >&2;
+    help 2;
+    exit 2;
+fi;
+
+# nacti jednotlive konfiguracni soubory
+for arg in "$@"; do
+    # soubor v argumentu neni soubor nebo neni citelny
+    if [ ! -f "$arg" ];then
+    	echo "$0: '$arg' is not file" >&2
+        exit 2
+    fi
+    if [ ! -r "$arg" ]; then
+        echo "$0: '$arg' is not readable"
+        exit 2
+    fi
+    if [ "$DEBUG" -eq 1 ]; then echo "$0:D processing $arg"; fi
+    for param in "${!parameters[@]}"; do
+        # aktualizace parametru
+        # vyber parametru z conf souboru
+        if [ "$DEBUG" -eq 1 ]; then echo "$0:D configuring $param"; fi
+        new=$(grep -E "\<$param " $arg | tr -s ' ' | grep -E "^ $param " | cut -d' ' -f3)
+        if [ "$DEBUG" -eq 1 ]; then echo "$0:D new configuration = '$new'"; fi
+        if [ "$new" = "" ]; then echo "$0: '$param' is not initialized"; exit 1; fi 
+        # aktualizuj promenou v poli
+        parameters["$param"]="$new"
+        # debu/verbose vypis
+        if [ $DEBUG -eq 1 -o $VERBOSE -eq 1 ]; then echo "$0: '$param' assigned '$new' from '$arg'"; fi
+    done
+    if [ $DEBUG -eq 1 ]; then echo "$0:D $arg processing finished"; fi
+done
+
+# zpracovani parametru -> napr zapis do conf souboru
+if [ $DEBUG -eq 1 -o $VERBOSE -eq 1 ]; then echo "$0: final processing..."; fi
+for param in "${!parameters[@]}"; do
+    if [ $DEBUG -eq 1 -o $VERBOSE -eq 1 ]; then echo "$0: '$param' = '${parameters[$param]}'"; fi
+    echo "$param ${parameters[$param]}" >> configuration.conf
+done
+echo "$0: done"
+exit 0

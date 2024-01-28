@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#create new directory
+if [ ! -d ./archive_dir ]; then
+	mkdir archive_dir;
+fi
+
+SEMESTER="$(cat ./courses_dir/info)" #code of the semester
+FOLDER="${SEMESTER}@$(date '+%Y-%m-%d_%H:%M:%S')" #name of the directory of the archived semester
+DATE="$(date '+%Y-%m-%d')"
+
+cd archive_dir/
+
+#copy courses to the archive
+mkdir "$FOLDER"
+cp -r ../courses_dir/* ${FOLDER}
+
+#create symlink to the newest backup
+if [ -L "$SEMESTER" ]; then rm "$SEMESTER"; fi
+ln -s "$FOLDER" "$SEMESTER"
+
+
+cd "$FOLDER"
+for i in $(ls -d ?I*); do
+	#add the "zaloha" message to index headers
+	cat "${i}/index" | sed "1s/=====/ zaloha z ${DATE} =====/2" > tmp;
+	mv tmp "${i}/index"
+	#create symlinks to newly archived version
+	if [ ! -d "../${i}" ]; then mkdir "../${i}"; fi
+	ln -s "../${FOLDER}/${i}" "../${i}/${FOLDER}"
+	if [ -L "../${i}/${SEMESTER}" ]; then rm "../${i}/${SEMESTER}"; fi
+	ln -s "../${SEMESTER}/${i}" "../${i}/${SEMESTER}"
+done
+
+echo "${0}: archiving succesful"

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+mkdir {a..z}
+
+# soubor 'studenti.html' je prekopirovany html radek z gitlabu https://gitlab.fit.cvut.cz/BI-PS2/bi-ps2/blob/master/media/tutorials/awk/bi-ps2-b182.html
+# nacte soubor 'studenti.html' vybere z nej jmeno-rocnik-kruh-email
+# rozdeli radek html na vie radku
+sed -n 's|href|\n|gp' studenti.html |
+# vybere jmeno-rocnik-kruh a email
+sed -nr -e '/="https/ s|.*html">(.*)</a></td><td>([[:digit:]]+)/([[:digit:]]+)</td>.*$|\1-\2-\3+|gp' -e '/="mailto:/ s|.*">(.*)</a>.*|\1|gp' |
+# spoji jmeno-rocnik-kruh a email na jeden radek a zbavi se nezadoucich radku
+sed -n 's|\+|-|; Te; N; s|\n||p; :e' |
+
+awk '
+BEGIN{
+    FS="-"
+}
+{
+# vyrizne username z emailu
+    username = substr($4, 0, 8)
+# vyrizne prvni pismeno username z mailu
+    letter = substr($4, 0, 1)
+
+# Vypis do souboru u/username.class
+    print username":"$1 >> letter".list"
+    print "USERNAME="username >> letter"/"username".class"
+    print "EMAIL="$4 >> letter"/"username".class"
+    print "REALNAME="$1 >> letter"/"username".class"
+    print "GRADE="$2 >> letter"/"username".class"
+    print "GROUP="$3 >> letter"/"username".class"
+}
+END{
+    print "AWK skoncilo"
+}
+'
+
