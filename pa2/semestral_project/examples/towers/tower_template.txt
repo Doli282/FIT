@@ -1,0 +1,6 @@
+m_Symbol (non-white character) (char)
+m_Damage (int >= 0)
+m_DEFAULT_RELOAD_TIME (int >= 0)
+m_Range (1/2) (int)
+m_Cost (int >= 0)
+m_type (1/2/3) (int)

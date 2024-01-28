@@ -1,0 +1,14 @@
+score (int >= 0)
+coins (int >= 0)
+lives (int > 0)
+level (int >= 0)
+
+width (int > 0)
+height (int > 0)
+
+x y [start] (int(from 0 to width - 1) int(from 0 to height - 1))
+x y [end] (int(from 0 to width - 1) int(from 0 to height - 1))
+
+type x y (char int(from 0 to width - 1) int(from 0 to height - 1))
+type x y (char int int)
+type x y (char int int)
