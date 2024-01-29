@@ -1,0 +1,16 @@
+{
+  "name": "cvut/bi-php-hw-04",
+  "description": "HW-04 for BI-PHP",
+  "type": "project",
+  "autoload": {
+    "files": ["autoloader.php", "trees.php"],
+    "classmap": ["tests"]
+  },
+  "require-dev": {
+    "php": "^8.2",
+    "phpunit/phpunit": "^10.3"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit tests"
+  }
+}

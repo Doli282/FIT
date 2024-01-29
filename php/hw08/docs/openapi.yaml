@@ -1,0 +1,236 @@
+openapi: 3.0.3
+info:
+  title: Swagger Book Shop - OpenAPI 3.0
+  description: |-
+    This is a simple book shop application API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: plyskand@fit.cvut.cz
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: Books
+    description: Everything about books
+  - name: Book Detail
+    description: Everything about books  
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      summary: Gets all existing books from Eshop
+      description: Get all books
+      operationId: getBooks
+      responses:
+        '200':
+          description: All books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+    post:
+      tags:
+        - Books
+      summary: Add a new book to the store
+      description: Add a new book to the store
+      operationId: addBook
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Authorization header use basic auth'
+          required: true
+          schema:
+            type: string
+            example: "Basic <token>"
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+        
+        required: true
+      responses:
+        '201':
+          description: "New book was successfully created"
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "The URL of created resource"
+              example: "/books/:id"
+          
+        '400':
+          description: "Bad Request"
+        '401':
+          description: "Unauthorized"  
+
+  /books/{id}:
+    get:
+      tags:
+        - Book Detail
+      summary: Find Book by Id
+      description: Returns a single book
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          description: "Id of book to return"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponseDetail'          
+        '400':
+          description: "Invalid book id"
+        '404':
+          description: "Book not found"
+    put:
+      tags:
+        - Book Detail
+      summary: Update book
+      description: This can only be done by the logged in user.
+      operationId: updateBook
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Authorization header use basic auth'
+          required: true
+          schema:
+            type: string
+            example: "Basic <token>"
+        - name: id
+          in: path
+          description: "Book identifier"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        '204':
+          description: "Book was succesfully update"
+        '400':
+          description: "Invalid book id"
+        '401':
+          description: "Unauthorized"  
+        '404':
+          description: "Book not found"      
+    delete:
+      tags:
+        - Book Detail
+      summary: Deletes a book
+      description: delete a book
+      operationId: deleteBook
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Authorization header use basic auth'
+          required: true
+          schema:
+            type: string
+            example: "Basic <token>"
+        - name: id
+          in: path
+          description: "Book id to delete"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Book was successfully deleted"
+        '400':
+          description: "Bad Request"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Book not found"  
+  
+components:
+  schemas:
+    BookRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "The Little Prince"
+          description: "The name of the book"
+        author:
+          type: string
+          example: "Antoine de Saint-Exupéry"
+          description: "The author name of the book"
+        publisher:
+          type: string
+          example: "Mariner Books"
+          description: "Publisher name"  
+        isbn:
+          type: string
+          example: "978-0156012195"
+          description: "Book identifier"
+        pages:
+          type: integer
+          description: "Page count"
+          example: 97
+    BookResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: "The Little Prince"
+          description: "Book name"
+        author:
+          type: string
+          example: "Antoine de Saint-Exupéry"
+          description: "Author name"
+    BookResponseDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: "The Little Prince"
+          description: "Book name"
+        author:
+          type: string
+          example: "Antoine de Saint-Exupéry"
+          description: "Author name"
+        publisher:
+          type: string
+          example: "Mariner Books"
+          description: "Publisher name"
+        isbn:
+          type: string
+          example: "978-0156012195"
+          description: "Book identifier"
+        pages:
+          type: integer
+          description: "Page count"
+          example: 97
+    

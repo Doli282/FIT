@@ -1,0 +1,10 @@
+tests/public/BasicTest.php
+tests/public/BasicTest.php.asc
+tests/private/RandomTest.php.gpg
+tests/private/RandomTest.php.gpg.asc
+tests/private/AutoloaderTest.php.gpg
+tests/private/AutoloaderTest.php.gpg.asc
+composer.json
+composer.json.asc
+composer.lock
+composer.lock.asc

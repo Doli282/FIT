@@ -1,0 +1,2 @@
+tests/private/PrivateTest.php.gpg
+tests/private/PrivateTest.php.gpg.asc

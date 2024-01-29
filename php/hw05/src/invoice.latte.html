@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<style>
+    body{
+        margin: 1.1cm;
+        font-size:15px;
+    }
+    table, th, td {
+        border:1px solid black;
+        border-collapse: collapse;
+        width:100%;
+        padding:5px;
+        text-align:left;
+        vertical-align: top;
+        font-family:Helvetica, sans-serif;color:#000000;
+    }
+    .number {
+        text-align:right;
+        font-family:Helvetica, sans-serif;color:#000000;
+    }
+    p {
+        font-family:Helvetica, sans-serif;color:#000000;
+    }
+</style>
+
+<body>
+
+<p>FAKTURA – DOKLAD c. {$invoice->getNumber()}</p>
+
+<table>
+    <tr>
+        <td>
+            <b>Dodavatel</b>
+            <p>
+                {$invoice->getSupplier()->getName()}<br>
+                {$invoice->getSupplier()->getAddress()->getStreet()}
+                {$invoice->getSupplier()->getAddress()->getNumber()}<br>
+                {$invoice->getSupplier()->getAddress()->getZipCode()}
+                {$invoice->getSupplier()->getAddress()->getCity()}
+            </p>
+            <p>
+                {$invoice->getSupplier()->getVatNumber()}
+            </p>
+                {if $invoice->getSupplier()->getAddress()->getPhone() !== null}
+                    Tel: {$invoice->getSupplier()->getAddress()->getPhone()}<br>
+                {/if}
+                {if $invoice->getSupplier()->getAddress()->getEmail() !== null}
+                    Email: {$invoice->getSupplier()->getAddress()->getEmail()}
+                {/if}
+        </td>
+        <td>
+            <b>Odberatel</b>
+            <p>
+                {$invoice->getCustomer()->getName()}<br>
+                {$invoice->getCustomer()->getAddress()->getStreet()}
+                {$invoice->getCustomer()->getAddress()->getNumber()}<br>
+                {$invoice->getCustomer()->getAddress()->getZipCode()}
+                {$invoice->getCustomer()->getAddress()->getCity()}
+            </p>
+            <p>
+                {$invoice->getCustomer()->getVatNumber()}
+            </p>
+                {if $invoice->getCustomer()->getAddress()->getPhone() !== null}
+                    Tel: {$invoice->getCustomer()->getAddress()->getPhone()}<br>
+                {/if}
+                {if $invoice->getCustomer()->getAddress()->getEmail() !== null}
+                    Email: {$invoice->getCustomer()->getAddress()->getEmail()}
+                {/if}
+        </td>
+    </tr>
+</table>
+
+{var $total}
+    <table>
+        <thead>
+        <tr>
+            <th>Polozka</th>
+            <th>Pocet m.j.</th>
+            <th>Cena za m.j.</th>
+            <th>Celkem</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $invoice->getItems() as $item}
+        <tr>
+            <td>{$item->getDescription()}</td>
+            <td class="number">{$item->getQuantity()}</td>
+            <td class="number">{$item->getUnitPrice()|number:2,',',' '}</td>
+            <td class="number">{$item->getTotalPrice()|number:2,',',' '}</td>
+            {$total += $item->getTotalPrice()}
+        </tr>
+        {/foreach}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Celkem</th>
+                <th class="number">{$total|number:2,',',' '}</th>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

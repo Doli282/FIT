@@ -1,0 +1,12 @@
+tests/MessageTrait.php
+tests/MessageTrait.php.asc
+tests/HelperFactory.php.asc
+tests/public/BooksTest.php.asc
+tests/public/BooksTest.php
+tests/private/PrivateBookTest.php.gpg
+tests/private/PrivateBookTest.php.gpg.asc
+tests/HelperFactory.php
+tests/filelist.txt
+tests/filelist.txt.asc
+public/index.php
+public/index.php.asc

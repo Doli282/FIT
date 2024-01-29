@@ -1,0 +1,6 @@
+tests/Public/PublicTest.php.asc
+tests/Public/PublicTest.php
+tests/Private/PrivateTest.php.gpg
+tests/Private/PrivateTest.php.gpg.asc
+tests/filelist.txt
+tests/filelist.txt.asc

@@ -1,0 +1,6 @@
+tests/Private/PrivateTest.php.gpg
+tests/Private/PrivateTest.php.gpg.asc
+tests/Public/PublicTest.php.asc
+tests/Public/example-star.png.asc
+tests/Public/PublicTest.php
+tests/Public/example-star.png

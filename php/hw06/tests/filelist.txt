@@ -1,0 +1,12 @@
+tests/public/AInitDatabaseTest.php
+tests/public/AInitDatabaseTest.php.asc
+tests/public/FindInDatabaseTest.php
+tests/public/FindInDatabaseTest.php.asc
+tests/public/TransactionTest.php
+tests/public/TransactionTest.php.asc
+tests/private/PrivateTest.php.gpg
+tests/private/PrivateTest.php.gpg.asc
+tests/MessageTrait.php
+tests/MessageTrait.php.asc
+tests/filelist.txt
+tests/filelist.txt.asc

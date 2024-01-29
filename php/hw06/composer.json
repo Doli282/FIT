@@ -1,0 +1,20 @@
+{
+  "name": "cvut/bi-php-hw-06",
+  "description": "HW-06 for BI-PHP",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "require-dev": {
+    "php": "^8.2",
+    "phpunit/phpunit": "^10.3"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit tests"
+  },
+  "require": {
+    "ext-pdo": "*"
+  }
+}

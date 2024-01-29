@@ -49,3 +49,9 @@ aps/hw1/memfile_*
 aps/hw1/test_Petr.asm
 aag/translate.sh
 
+#php files
+**/.idea
+**/vendor
+**/*.sqlite
+**/composer.lock
+**/*.db

@@ -1,0 +1,25 @@
+version: '3'
+services:
+  php:
+    image: 'gitlab.fit.cvut.cz:5050/bi-php/bi-php-docker/php:8.2'
+    # for linux 'gitlab.fit.cvut.cz:5050/bi-php/bi-php-docker/php:8.2-linux'
+    restart: on-failure
+    volumes:
+      - .:/var/www/html
+    networks:
+      - internal
+  postgres:
+    image: 'gitlab.fit.cvut.cz:5050/bi-php/bi-php-docker/postgresql:16'
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=pass
+    ports:
+      - "5432:5432"
+    # volumes:
+    #     - ./docker/postgres/data:/var/lib/postgresql/data
+    networks:
+      - internal
+networks:
+  internal:
