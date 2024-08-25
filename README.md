@@ -52,10 +52,11 @@ This repository contains projects and assignments created during my studies at t
   - PHP = Programming in PHP
   - IDO = Introduction to DevOps
   - VR1 = Virtual Reality 1
+6. Semester - Erasmus at UAS Metropolia, Helsinki, Finland
 
 ## Disclaimer
 
-I am not the author of the instructions for the assignment. All credits go to the teachers at FIT. Instructions might be missing or may be avaiable only in Czech. Not every completed assignment is stored here.Some solutions use prepared template. 
+I am not the author of the instructions for the assignment. All credits go to the teachers at FIT. Instructions might be missing or may be avaiable only in Czech. Not every completed assignment is stored here. Some solutions use prepared template. 
 
 ## Links
 
